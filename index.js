@@ -30,21 +30,21 @@ scene.add(rectLight)
 let particles = {}
 particles.geometry = new THREE.BufferGeometry()
 particles.points = []
-for(let i = 0; i < 3000; i++) {
-	particles.points.push(Math.random() * 100 - 50, Math.random() * 20, Math.random() * -200)
+for(let i = 0; i < 1000; i++) {
+	particles.points.push(Math.random() * 100 - 50, Math.random() * 15, Math.random() * -100)
 }
 particles.bufferAttribute = new THREE.Float32BufferAttribute(particles.points, 3)
 particles.geometry.setAttribute('position', particles.bufferAttribute)
 particles.mesh = new THREE.Points(particles.geometry, new THREE.PointsMaterial({ color: 0xaabbdd, size: 0.5, depthTest: false}))
 particles.update = () => {
 	particles.bufferAttribute.needsUpdate = true
-	for(let i = 0; i < 3000; i++) {
+	for(let i = 0; i < 1000; i++) {
 		let x = particles.bufferAttribute.getX(i)
 		if(x > 50) x = -50
 		else if(x < -50) x = 50
 		particles.bufferAttribute.setX(i, x + Math.sin(i * 123.45) * 0.1)
 		let y = particles.bufferAttribute.getY(i)
-		particles.bufferAttribute.setY(i, (y > 0)? y - 0.1 : 20)
+		particles.bufferAttribute.setY(i, (y > 0)? y - 0.1 : 15)
 
 	}
 }
