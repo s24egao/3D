@@ -3,6 +3,7 @@ loadingManager.onProgress = (url, loaded, total) => {
 	$('#loading div div').css('width', `${loaded / total * 100}%`)
 	if(loaded / total >= 1) {
 		setTimeout(() => { $('#loading').css('opacity', 0) }, 2000)
+		setTimeout(() => { $('#loading').css('display', 'none') }, 2500)
 	}
 }
 
@@ -71,7 +72,12 @@ new THREE.TextureLoader(loadingManager).load('./assets/image.png', texture => {
 	let mesh = new THREE.Mesh(g, m)
 	mesh.position.set(0, 3.63, -3.5)
 	mesh.click = () => {
-		window.open('https://www.pixiv.net/artworks/97978612', '_blank')
+		loadDialogue([
+			'你看這是我畫的畫',
+			'要不要到 Pixiv 看看大圖？',
+			'可是你不能拒絕耶',
+			() => { window.open('https://www.pixiv.net/artworks/97978612', '_blank') }
+		])
 	}
 	interactiveObjects.push(mesh)
 	scene.add(mesh)
@@ -101,6 +107,14 @@ new THREE.TextureLoader(loadingManager).load('./assets/sketch.jpg', texture => {
 	let mesh = new THREE.Mesh(g, m)
 	mesh.position.set(-4.2, 2.6, -3.7)
 	mesh.rotation.z = 0.05
+	mesh.click = () => {
+		loadDialogue([
+			'這張圖是這個 3D 網頁的草稿 :)',
+			'我本來覺得畫得很好 畫面稍微雜亂但豐富 有點魚眼效果但有張力的透視',
+			'結果我 3D 建模變成這個樣子 :('
+		])
+	}
+	interactiveObjects.push(mesh)
 	scene.add(mesh)
 })
 
@@ -119,7 +133,10 @@ new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => 
 	mesh.position.set(6.02, 4.87, 2.95)
 	mesh.rotation.y = -31 / 57.29577
 	mesh.click = () => {
-		window.open('https://twitter.com/s24egao', '_blank')
+		loadDialogue([
+			'歡迎到我的推特看看！',
+			() => { window.open('https://twitter.com/s24egao', '_blank') }
+		])
 	}
 	interactiveObjects.push(mesh)
 	scene.add(mesh)
@@ -131,6 +148,15 @@ const clock_m = new THREE.MeshStandardMaterial({ alphaMap: clock_texture, emissi
 const clock_mesh = new THREE.Mesh(clock_g, clock_m)
 clock_mesh.position.set(5.96, 5.6, -0.4)
 clock_mesh.rotation.y = -90 / 57.29577
+clock_mesh.click = () => {
+	loadDialogue([
+		`現在是 ${new Date().getHours()} 點`,
+		`然後 ${new Date().getMinutes()} 分`,
+		`然後 ${new Date().getSeconds()} 秒`,
+		':)',
+	])
+}
+interactiveObjects.push(clock_mesh)
 scene.add(clock_mesh)
 
 let ray = new THREE.Raycaster()
@@ -146,8 +172,8 @@ window.addEventListener('mousemove', e => {
 
 	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
 	let intersects = ray.intersectObjects(interactiveObjects)
-	if(intersects.length > 0) document.body.style.cursor = 'pointer'
-	else document.body.style.cursor = 'default'
+	if(intersects.length > 0) renderer.domElement.style.cursor = 'pointer'
+	else renderer.domElement.style.cursor = 'default'
 })
 
 window.addEventListener('resize', e => {
@@ -173,5 +199,4 @@ function animate() {
 
 	renderer.render(scene, camera)
 }
-
 animate()
