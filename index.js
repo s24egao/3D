@@ -57,7 +57,8 @@ new THREE.GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
 		gltf.scene.traverse(child => {
 			if(child instanceof THREE.Mesh) {
 				if(child.material.name == 'Baked') child.material = m
-				if(child.material.name == 'Glass') child.material.roughness = 0.1
+				if(child.material.name == 'Glass') child.material.thickness = 0.1
+				if(child.material.name == 'Glass') child.material.transmission = 0.5
 			}
 		})
 		scene.add(gltf.scene)
@@ -126,7 +127,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => 
 
 const clock_texture = new THREE.CanvasTexture(document.getElementById('clock').getContext('2d').canvas)
 const clock_g = new THREE.PlaneGeometry(3.75, 1.25)
-const clock_m = new THREE.MeshBasicMaterial({ alphaMap: clock_texture, color: 0xffffff, transparent: true })
+const clock_m = new THREE.MeshStandardMaterial({ alphaMap: clock_texture, emissive: 0xffffff, transparent: true })
 const clock_mesh = new THREE.Mesh(clock_g, clock_m)
 clock_mesh.position.set(5.96, 5.6, -0.4)
 clock_mesh.rotation.y = -90 / 57.29577
