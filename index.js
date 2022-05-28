@@ -1,10 +1,10 @@
+if(window.innerWidth / window.innerHeight < 1) $('#wide-screen').css('opacity', '1')
+else $('#wide-screen').css('opacity', '0')
+
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	$('#loading div div').css('width', `${loaded / total * 100}%`)
-	if(loaded / total >= 1) {
-		setTimeout(() => { $('#loading').css('opacity', 0) }, 2000)
-		setTimeout(() => { $('#loading').css('display', 'none') }, 2500)
-	}
+	if(loaded / total >= 1) setTimeout(() => { $('#loading').css('opacity', 0) }, 2000)
 }
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -180,6 +180,8 @@ window.addEventListener('resize', e => {
 	camera.aspect = window.innerWidth / window.innerHeight
 	camera.updateProjectionMatrix()
 	renderer.setSize(window.innerWidth, window.innerHeight)
+	if(window.innerWidth / window.innerHeight < 1) $('#wide-screen').css('opacity', '1')
+	else $('#wide-screen').css('opacity', '0')
 })
 
 function lerp(a, b, f) {

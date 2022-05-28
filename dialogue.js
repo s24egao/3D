@@ -2,8 +2,6 @@ let now_dialogues
 let now_line = ''
 let text_index = 0
 
-loadDialogue(dialogue1)
-
 function loadDialogue(dialogue) {
 	$('#dialogue-text').text('')
 	$('#dialogue').css('bottom', '0px')
