@@ -1,6 +1,8 @@
 if(window.innerWidth / window.innerHeight < 1) $('#wide-screen').css('opacity', '1')
 else $('#wide-screen').css('opacity', '0')
 
+console.log('要更快 還要更快')
+
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	$('#loading div div').css('width', `${loaded / total * 100}%`)
@@ -12,21 +14,21 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
 document.body.appendChild(renderer.domElement)
 
+const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 1000)
 const scene = new THREE.Scene()
 scene.background = new THREE.Color(0x7788aa)
-const camera = new THREE.PerspectiveCamera(24, window.innerWidth / window.innerHeight, 0.1, 1000)
 
 let mouseX = 0, mouseY = 0, lookOffsetX = 0, lookOffsetY = 0
 let interactiveObjects = []
+let animatedTextures = []
 
 const directionalLight = new THREE.DirectionalLight(0x7788aa, 1)
 directionalLight.position.set(0, 1, 1)
-scene.add(directionalLight)
-const aimbientLight = new THREE.AmbientLight(0x7788aa, 0.6)
-scene.add(aimbientLight)
 const rectLight = new THREE.RectAreaLight(0xffffff, 0.5, 1.6 * 3.5, 0.9 * 3.5)
 rectLight.position.set(0, 3.65, -3)
+scene.add(directionalLight)
 scene.add(rectLight)
+scene.add(new THREE.AmbientLight(0x7788aa, 0.6))
 
 let particles = {}
 particles.geometry = new THREE.BufferGeometry()
@@ -43,7 +45,7 @@ particles.update = () => {
 		let x = particles.bufferAttribute.getX(i)
 		if(x > 50) x = -50
 		else if(x < -50) x = 50
-		particles.bufferAttribute.setX(i, x + Math.sin(i * 123.45) * 0.1)
+		particles.bufferAttribute.setX(i, x + Math.sin(i * 123.45) * 0.1 - 0.1)
 		let y = particles.bufferAttribute.getY(i)
 		particles.bufferAttribute.setY(i, (y > 0)? y - 0.1 : 15)
 
@@ -52,112 +54,127 @@ particles.update = () => {
 scene.add(particles.mesh)
 
 new THREE.GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
-	new THREE.TextureLoader().load('./assets/baked.png', image => {
-		image.flipY = false
-		let m = new THREE.MeshBasicMaterial({ map: image })
-		gltf.scene.traverse(child => {
-			if(child instanceof THREE.Mesh) {
-				if(child.material.name == 'Baked') child.material = m
-				if(child.material.name == 'Glass') child.material.thickness = 0.1
-				if(child.material.name == 'Glass') child.material.transmission = 0.5
-			}
-		})
-		scene.add(gltf.scene)
+new THREE.TextureLoader().load('./assets/baked.png', image => {
+	image.flipY = false
+	let material = new THREE.MeshBasicMaterial({ map: image })
+	gltf.scene.traverse(child => {
+		if(child instanceof THREE.Mesh) {
+			if(child.material.name == 'Baked') child.material = material
+			if(child.material.name == 'Glass') child.material.thickness = 0.1
+			if(child.material.name == 'Glass') child.material.transmission = 0.5
+		}
+	})
+	scene.add(gltf.scene)
+})})
+
+new THREE.TextureLoader(loadingManager).load('./assets/image.png', texture => {
+	addImage({
+		texture: texture, 
+		scale: { x: 1.6 * 3.5, y: 0.9 * 3.5 },
+		position: { x: 0, y: 3.63, z: -3.5 },
+		onclick: () => {
+			loadDialogue([
+				'你看這是我畫的畫',
+				'要不要到 Pixiv 看看大圖？',
+				'可是你不能拒絕耶',
+				() => { window.open('https://www.pixiv.net/artworks/97978612', '_blank') }
+			])
+		}
 	})
 })
 
-new THREE.TextureLoader(loadingManager).load('./assets/image.png', texture => {
-	let g = new THREE.PlaneGeometry(1.6 * 3.5, 0.9 * 3.5)
-	let m = new THREE.MeshStandardMaterial({ map: texture })
-	let mesh = new THREE.Mesh(g, m)
-	mesh.position.set(0, 3.63, -3.5)
-	mesh.click = () => {
-		loadDialogue([
-			'你看這是我畫的畫',
-			'要不要到 Pixiv 看看大圖？',
-			'可是你不能拒絕耶',
-			() => { window.open('https://www.pixiv.net/artworks/97978612', '_blank') }
-		])
-	}
-	interactiveObjects.push(mesh)
-	scene.add(mesh)
-})
-
 new THREE.TextureLoader(loadingManager).load('./assets/poster1.jpg', texture => {
-	let g = new THREE.PlaneGeometry(1.5, 2)
-	let m = new THREE.MeshStandardMaterial({ map: texture })
-	let mesh = new THREE.Mesh(g, m)
-	mesh.position.set(4.2, 4.5, -3.7)
-	mesh.rotation.z = -0.1
-	scene.add(mesh)
+	addImage({
+		texture: texture, 
+		scale: { x: 1.5, y: 2 },
+		position: { x: 4.2, y: 4.5, z: -3.7 },
+		rotation: { x: 0, y: 0, z: -6 }
+	})
 })
 
 new THREE.TextureLoader(loadingManager).load('./assets/icon.png', texture => {
-	let g = new THREE.PlaneGeometry(1, 1)
-	let m = new THREE.MeshStandardMaterial({ map: texture })
-	let mesh = new THREE.Mesh(g, m)
-	mesh.position.set(4.8, 2.6, -3.7)
-	mesh.rotation.z = 0.1
-	scene.add(mesh)
-})
-
-new THREE.TextureLoader(loadingManager).load('./assets/sketch.jpg', texture => {
-	let g = new THREE.PlaneGeometry(2, 1.5)
-	let m = new THREE.MeshStandardMaterial({ map: texture })
-	let mesh = new THREE.Mesh(g, m)
-	mesh.position.set(-4.2, 2.6, -3.7)
-	mesh.rotation.z = 0.05
-	mesh.click = () => {
-		loadDialogue([
-			'這張圖是這個 3D 網頁的草稿 :)',
-			'我本來覺得畫得很好 畫面稍微雜亂但豐富 有點魚眼效果但有張力的透視',
-			'結果我 3D 建模變成這個樣子 :('
-		])
-	}
-	interactiveObjects.push(mesh)
-	scene.add(mesh)
+	addImage({
+		texture: texture, 
+		scale: { x: 1, y: 1 },
+		position: { x: 4.8, y: 2.6, z: -3.7 },
+		rotation: { x: 0, y: 0, z: 6 }
+	})
 })
 
 new THREE.TextureLoader(loadingManager).load('./assets/text.jpg', texture => {
-	let g = new THREE.PlaneGeometry(1 , 1)
-	let m = new THREE.MeshStandardMaterial({ alphaMap: texture, color: 0xffffff, transparent: true })
-	let mesh = new THREE.Mesh(g, m)
-	mesh.position.set(-4, 3.9, -3.7)
-	scene.add(mesh)
+	addImage({
+		alphaMap: texture, 
+		scale: { x: 1, y: 1 },
+		position: { x: -4, y: 3.9, z: -3.7 }
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/sketch.jpg', texture => {
+	addImage({
+		texture: texture, 
+		scale: { x: 2, y: 1.5 },
+		position: { x: -4.2, y: 2.6, z: -3.7 },
+		rotation: { x: 0, y: 0, z: 3 },
+		onclick: () => {
+			loadDialogue([
+				'這張圖是這個 3D 網頁的草稿 :)',
+				'我本來覺得畫得很好 畫面稍微雜亂但豐富 有點魚眼效果但有張力的透視',
+				'結果我 3D 建模變成這個樣子 :('
+			])
+		}
+	})
 })
 
 new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => {
-	let g = new THREE.PlaneGeometry(1 * 0.8, 0.85 * 0.8)
-	let m = new THREE.MeshStandardMaterial({ alphaMap: texture, color: 0x1d9bf0, transparent: true })
-	let mesh = new THREE.Mesh(g, m)
-	mesh.position.set(6.02, 4.87, 2.95)
-	mesh.rotation.y = -31 / 57.29577
-	mesh.click = () => {
-		loadDialogue([
-			'歡迎到我的推特看看！',
-			() => { window.open('https://twitter.com/s24egao', '_blank') }
-		])
-	}
-	interactiveObjects.push(mesh)
-	scene.add(mesh)
+	addImage({
+		alphaMap: texture, 
+		color: 0x1d9bf0,
+		scale: { x: 0.8, y: 0.68 },
+		position: { x: 6.02, y: 4.87, z: 2.95 },
+		rotation: { x: 0, y: -31, z: 0 },
+		onclick: () => {
+			loadDialogue([
+				'歡迎到我的推特看看！',
+				() => { window.open('https://twitter.com/s24egao', '_blank') }
+			])
+		}
+	})
 })
 
 const clock_texture = new THREE.CanvasTexture(document.getElementById('clock').getContext('2d').canvas)
-const clock_g = new THREE.PlaneGeometry(3.75, 1.25)
-const clock_m = new THREE.MeshStandardMaterial({ alphaMap: clock_texture, emissive: 0xffffff, transparent: true })
-const clock_mesh = new THREE.Mesh(clock_g, clock_m)
-clock_mesh.position.set(5.96, 5.6, -0.4)
-clock_mesh.rotation.y = -90 / 57.29577
-clock_mesh.click = () => {
-	loadDialogue([
-		`現在是 ${new Date().getHours()} 點`,
-		`然後 ${new Date().getMinutes()} 分`,
-		`然後 ${new Date().getSeconds()} 秒`,
-		':)',
-	])
+animatedTextures.push(clock_texture)
+addImage({
+	alphaMap: clock_texture,
+	emissive: 0xffffff,
+	scale: { x: 3.75, y: 1.25 },
+	position: { x: 5.96, y: 5.6, z: -0.3 },
+	rotation: { x: 0, y: -90, z: 0 },
+	onclick: () => {
+		loadDialogue([
+			`現在是 ${new Date().getHours()} 點`,
+			`然後 ${new Date().getMinutes()} 分`,
+			`然後 ${new Date().getSeconds()} 秒`,
+			':)',
+		])
+	},
+})
+
+function animate() {
+	requestAnimationFrame(animate)
+
+	lookOffsetX = lerp(lookOffsetX, mouseX, 0.1)
+	lookOffsetY = lerp(lookOffsetY, mouseY, 0.1)
+	camera.lookAt(3 + lookOffsetX * 0.8, 4.2 - lookOffsetY * 0.8, -1)
+	camera.position.set(-3.6 + lookOffsetX * 0.6, 3.6 - lookOffsetY * 0.6, 12 + lookOffsetX)
+
+	particles.update()
+	for(let texture of animatedTextures) {
+		texture.needsUpdate = true
+	}
+
+	renderer.render(scene, camera)
 }
-interactiveObjects.push(clock_mesh)
-scene.add(clock_mesh)
+animate()
 
 let ray = new THREE.Raycaster()
 window.addEventListener('click', e => {
@@ -188,17 +205,27 @@ function lerp(a, b, f) {
 	return a + (b - a) * f
 }
 
-function animate() {
-	requestAnimationFrame(animate)
-
-	lookOffsetX = lerp(lookOffsetX, mouseX, 0.1)
-	lookOffsetY = lerp(lookOffsetY, mouseY, 0.1)
-	camera.lookAt(3 + lookOffsetX * 0.8, 4 - lookOffsetY * 0.8, -1)
-	camera.position.set(-3.6 + lookOffsetX * 0.6, 3.6 - lookOffsetY * 0.6, 17)
-
-	particles.update()
-	clock_texture.needsUpdate = true
-
-	renderer.render(scene, camera)
+function addImage(image) {
+	let geometry = new THREE.PlaneGeometry(image.scale.x, image.scale.y)
+	let material 
+	if(!image.alphaMap) material = new THREE.MeshStandardMaterial({ map: image.texture })
+	else material = new THREE.MeshStandardMaterial({
+		alphaMap: image.alphaMap,
+		color: (image.color)? image.color : 0xffffff,
+		emissive: (image.emissive)? image.emissive : 0x000000,
+		transparent: true
+	})
+	let mesh = new THREE.Mesh(geometry, material)
+	if(image.position) mesh.position.set(image.position.x, image.position.y, image.position.z)
+	if(image.rotation) {
+		mesh.rotation.x = image.rotation.x / 57.29577
+		mesh.rotation.y = image.rotation.y / 57.29577
+		mesh.rotation.z = image.rotation.z / 57.29577
+	}
+	if(image.onclick) {
+		mesh.click = image.onclick
+		interactiveObjects.push(mesh)
+	}
+	scene.add(mesh)
+	return mesh
 }
-animate()
