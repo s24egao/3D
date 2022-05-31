@@ -7,6 +7,7 @@
 	<meta property="og:title" content="木白">
 	<meta property="og:description" content="3D Website">
 	<meta property="twitter:card" content="summary_large_image">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" type="image" href="assets/icon.png">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,14 +70,17 @@
 			<div id="dialogue-text">文字文字文字</div>
 		</div>
 	</div>
-	<canvas id="clock" width="600" height="200" style="display: none;"></canvas>
+	<canvas id="clock" width="600" height="288" style="display: none;"></canvas>
+	<video src="assets/hello.mp4" id="video1" style="display: none;" autoplay loop muted playsinline disablepictureinpicture></video>
 	<script type="text/javascript">
 		let clock = document.getElementById('clock').getContext('2d')
+		let frameCount = 0
+		let message = '下一班車即將不會進站          請緊握扶手 站穩踏階          要更快 還要更快'
 		update()
 		function update() {
 			window.requestAnimationFrame(update)
 			clock.fillStyle = 'black'
-			clock.fillRect(0, 0, 600, 200)
+			clock.fillRect(0, 0, 600, 288)
 			clock.fillStyle = 'white'
 			clock.font = '140px Noto Sans TC'
 			clock.textAlign = 'center'
@@ -89,6 +93,10 @@
 			clock.fillText(':', 405, 140)
 			clock.fillText((date.getSeconds() < 10)? 0 : parseInt(date.getSeconds() / 10), 470, 150)
 			clock.fillText((date.getSeconds() % 10), 550, 150)
+			clock.font = '80px Noto Sans TC'
+			clock.textAlign = 'left'
+			clock.fillText(message, 600 - (frameCount * 2) % (clock.measureText(message).width + 700), 250)
+			frameCount++
 		}
 	</script>
 	<script src="dialogue.js"></script>

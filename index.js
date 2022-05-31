@@ -16,6 +16,7 @@ document.body.appendChild(renderer.domElement)
 
 const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 1000)
 const scene = new THREE.Scene()
+scene.fog = new THREE.Fog(0x7788aa, 0, 150)
 scene.background = new THREE.Color(0x7788aa)
 
 let mouseX = 0, mouseY = 0, lookOffsetX = 0, lookOffsetY = 0
@@ -23,18 +24,18 @@ let interactiveObjects = []
 let animatedTextures = []
 
 const directionalLight = new THREE.DirectionalLight(0x7788aa, 1)
-directionalLight.position.set(0, 1, 1)
+directionalLight.position.set(1, 1, 1)
 const rectLight = new THREE.RectAreaLight(0xffffff, 0.5, 1.6 * 3.5, 0.9 * 3.5)
 rectLight.position.set(0, 3.65, -3)
 scene.add(directionalLight)
 scene.add(rectLight)
-scene.add(new THREE.AmbientLight(0x7788aa, 0.6))
+scene.add(new THREE.AmbientLight(0x7788aa, 0.8))
 
 let particles = {}
 particles.geometry = new THREE.BufferGeometry()
 particles.points = []
 for(let i = 0; i < 1000; i++) {
-	particles.points.push(Math.random() * 100 - 50, Math.random() * 15, Math.random() * -100)
+	particles.points.push(Math.random() * 100 - 20, Math.random() * 20, Math.random() * -80)
 }
 particles.bufferAttribute = new THREE.Float32BufferAttribute(particles.points, 3)
 particles.geometry.setAttribute('position', particles.bufferAttribute)
@@ -43,11 +44,10 @@ particles.update = () => {
 	particles.bufferAttribute.needsUpdate = true
 	for(let i = 0; i < 1000; i++) {
 		let x = particles.bufferAttribute.getX(i)
-		if(x > 50) x = -50
-		else if(x < -50) x = 50
+		if(x < -20) x = 80
 		particles.bufferAttribute.setX(i, x + Math.sin(i * 123.45) * 0.1 - 0.1)
 		let y = particles.bufferAttribute.getY(i)
-		particles.bufferAttribute.setY(i, (y > 0)? y - 0.1 : 15)
+		particles.bufferAttribute.setY(i, (y > 0)? y - 0.1 : 20)
 
 	}
 }
@@ -60,8 +60,6 @@ new THREE.TextureLoader().load('./assets/baked.png', image => {
 	gltf.scene.traverse(child => {
 		if(child instanceof THREE.Mesh) {
 			if(child.material.name == 'Baked') child.material = material
-			if(child.material.name == 'Glass') child.material.thickness = 0.1
-			if(child.material.name == 'Glass') child.material.transmission = 0.5
 		}
 	})
 	scene.add(gltf.scene)
@@ -141,13 +139,27 @@ new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => 
 	})
 })
 
-const clock_texture = new THREE.CanvasTexture(document.getElementById('clock').getContext('2d').canvas)
-animatedTextures.push(clock_texture)
+const video1 = document.getElementById('video1')
+video1.play()
+setTimeout(() => {
+	const hello = new THREE.VideoTexture(video1)
+	animatedTextures.push(hello)
+	addImage({
+		alphaMap: hello, 
+		emissive: 0xffffff,
+		scale: { x: 2, y: 0.7 },
+		position: { x: 6.06, y: 2.45, z: 2.88 },
+		rotation: { x: 0, y: -17, z: 1.8 }
+	})
+}, 1000)
+
+const display = new THREE.CanvasTexture(clock.canvas)
+animatedTextures.push(display)
 addImage({
-	alphaMap: clock_texture,
+	alphaMap: display,
 	emissive: 0xffffff,
-	scale: { x: 3.75, y: 1.25 },
-	position: { x: 5.96, y: 5.6, z: -0.3 },
+	scale: { x: 3.75, y: 1.8 },
+	position: { x: 5.96, y: 5.3, z: -0.3 },
 	rotation: { x: 0, y: -90, z: 0 },
 	onclick: () => {
 		loadDialogue([
