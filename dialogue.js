@@ -3,6 +3,7 @@ let now_line = ''
 let text_index = 0
 
 function loadDialogue(dialogue) {
+	if(now_dialogues.length > 0) return
 	$('#dialogue-text').text('')
 	$('#dialogue').css('bottom', '0px')
 	text_index = 0
