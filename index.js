@@ -23,13 +23,13 @@ let mouseX = 0, mouseY = 0, lookOffsetX = 0, lookOffsetY = 0
 let interactiveObjects = []
 let animatedTextures = []
 
-const directionalLight = new THREE.DirectionalLight(0x7788aa, 1)
+const directionalLight = new THREE.DirectionalLight(0x888888, 1)
 directionalLight.position.set(1, 1, 1)
 const rectLight = new THREE.RectAreaLight(0xffffff, 0.5, 1.6 * 3.5, 0.9 * 3.5)
 rectLight.position.set(0, 3.65, -3)
 scene.add(directionalLight)
 scene.add(rectLight)
-scene.add(new THREE.AmbientLight(0x7788aa, 0.8))
+scene.add(new THREE.AmbientLight(0x607cad, 1))
 
 let particles = {}
 particles.geometry = new THREE.BufferGeometry()
@@ -60,6 +60,8 @@ new THREE.TextureLoader().load('./assets/baked.png', image => {
 	gltf.scene.traverse(child => {
 		if(child instanceof THREE.Mesh) {
 			if(child.material.name == 'Baked') child.material = material
+			if(child.material.name == 'Glass') child.material.transparent = true
+			if(child.material.name == 'Glass') child.material.opacity = 0.3
 		}
 	})
 	scene.add(gltf.scene)
