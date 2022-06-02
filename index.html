@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<title>木白</title>
@@ -47,8 +47,11 @@
 			top: 0px;
 			left: 0px;
 			padding: 16px;
-			user-select: none;
 			box-sizing: border-box;
+		}
+
+		div {
+			user-select: none;
 		}
 	</style>
 </head>
@@ -56,10 +59,16 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 	<script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
 	<script src="https://threejs.org/examples/js/interactive/InteractiveGroup.js"></script>
-	<div id="loading" style="background: white; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; transition-duration: 0.5s; z-index: 1; pointer-events: none;">
-		<div style="margin: 20px; color: #7788aa; font-family: Noto Sans TC; font-size: 24px;">Loading...</div>
-		<div style="width: 30%; height: 3px; background: #dddddd;">
-			<div style="width: 0%; height: 100%; background: #7788aa; transition-duration: 1s"></div>
+	<div id="loading" style="background: white; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; transition-duration: 0.5s; z-index: 1;">
+		<div id="progress" style="position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; transition-duration: 0.5s;">
+			<div style="margin: 20px; color: #7788aa; font-family: Noto Sans TC; font-size: 24px;">Loading...</div>
+			<div style="width: 30%; height: 3px; background: #dddddd;">
+				<div style="width: 0%; height: 100%; background: #7788aa; transition-duration: 1s"></div>
+			</div>
+		</div>
+		<div id="language" style="position: fixed; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; transition-duration: 0.5s; opacity: 0;">
+			<div style="margin: 20px; color: #7788aa; font-family: Noto Sans TC; font-size: 30px; cursor: pointer;" onclick="select_language(0)">中文</div>
+			<div style="margin: 20px; color: #7788aa; font-family: Noto Sans TC; font-size: 30px; cursor: pointer;" onclick="select_language(1)">English</div>
 		</div>
 	</div>
 	<div id="wide-screen" style="background: white; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; transition-duration: 0.5s; z-index: 1; pointer-events: none; color: #7788aa; font-family: Noto Sans TC; font-size: 36px; opacity: 0; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
@@ -68,26 +77,17 @@
 			<div id="dialogue-panel"></div>
 			<div style="background: #7788aa; position: absolute; top: 0px; left: -16px; width: 16px; height: 100%;"></div>
 			<div style="background: #7788aa; position: absolute; top: 0px; right: -16px; width: 16px; height: 100%;"></div>
-			<div style="animation: dialogue 0.5s 0s infinite alternate-reverse ease-in-out; position: absolute; bottom: 20px; right: 60px; font-family: Noto Sans TC; font-size: 42px; color: #7788aa; user-select: none">...</div>
+			<div style="animation: dialogue 0.5s 0s infinite alternate-reverse ease-in-out; position: absolute; bottom: 20px; right: 60px; font-family: Noto Sans TC; font-size: 42px; color: #7788aa;">...</div>
 			<div id="dialogue-text"></div>
 		</div>
 	</div>
 	<canvas id="clock" width="600" height="288" style="display: none;"></canvas>
 	<video src="assets/video1.mp4" id="video1" style="display: none;" autoplay loop muted playsinline disablepictureinpicture></video>
 	<video src="assets/video2.mp4" id="video2" style="display: none;" autoplay loop muted playsinline disablepictureinpicture></video>
+	<script src="dialogue.js"></script>
 	<script type="text/javascript">
 		let clock = document.getElementById('clock').getContext('2d')
 		let frameCount = 0
-		let message = [
-			'下一班車即將不會進站',
-			'要更快 還要更快', 
-			'休息一下 進廣告囉',
-			'歡迎光臨 https://s24egao.github.io/3d',
-			'往 74 站的列車即將在 10 秒後切換',
-			'請緊握扶手 站穩踏階',
-			'緊急!!! Blender 閃退怎麼辦!?',
-			':O'
-		].join('               ')
 		function update() {
 			requestAnimationFrame(update)
 			clock.fillStyle = 'black'
@@ -106,12 +106,11 @@
 			clock.fillText((date.getSeconds() % 10), 550, 150)
 			clock.font = '70px Noto Sans TC'
 			clock.textAlign = 'left'
-			clock.fillText(message, 600 - (frameCount * 2) % (clock.measureText(message).width + 700), 250)
+			clock.fillText(message[language], 600 - (frameCount * 2) % (clock.measureText(message[language]).width + 700), 250)
 			frameCount++
 		}
 		update()
 	</script>
-	<script src="dialogue.js"></script>
 	<script src="index.js"></script>
 </body>
 </html>

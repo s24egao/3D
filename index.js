@@ -5,8 +5,20 @@ console.log('要更快 還要更快')
 
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
-	$('#loading div div').css('width', `${loaded / total * 100}%`)
-	if(loaded / total >= 1) setTimeout(() => { $('#loading').css('opacity', 0) }, 2000)
+	$('#progress div div').css('width', `${loaded / total * 100}%`)
+	if(loaded / total >= 1) {
+		$('#language').css('display', 'flex')
+		setTimeout(() => {
+			$('#progress').css('opacity', 0)
+			$('#language').css('opacity', 1)
+		}, 1000)
+	}
+}
+
+function select_language(i) {
+	language = i
+	$('#loading').css('opacity', 0)
+	setTimeout(() => $('#loading').css('display', 'none'), 250)
 }
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -39,7 +51,7 @@ for(let i = 0; i < 1000; i++) {
 }
 particles.bufferAttribute = new THREE.Float32BufferAttribute(particles.points, 3)
 particles.geometry.setAttribute('position', particles.bufferAttribute)
-particles.mesh = new THREE.Points(particles.geometry, new THREE.PointsMaterial({ color: 0xaabbdd, size: 0.5, depthTest: false}))
+particles.mesh = new THREE.Points(particles.geometry, new THREE.PointsMaterial({ color: 0xaabbdd, size: 0.5}))
 particles.update = () => {
 	particles.bufferAttribute.needsUpdate = true
 	for(let i = 0; i < 1000; i++) {
@@ -53,6 +65,37 @@ particles.update = () => {
 }
 scene.add(particles.mesh)
 
+let gallery = {
+	time: 600,
+	artworks: [],
+	addImage: image => {
+		let geometry = new THREE.PlaneGeometry(5.6, 3.15)
+		let material = new THREE.MeshStandardMaterial({ map: image.texture, transparent: true })
+		let mesh = new THREE.Mesh(geometry, material)
+		mesh.position.set(0, 3.63, -3.5)
+		if(image.onclick) {
+			mesh.click = image.onclick
+			interactiveObjects.push(mesh)
+		}
+		scene.add(mesh)
+		gallery.artworks.push(mesh)
+	},
+	update: () => {
+		let display_index = parseInt(frameCount / gallery.time) % gallery.artworks.length
+		for(let i = 0; i < gallery.artworks.length; i++) {
+			if(display_index == i) {
+				gallery.artworks[i].position.z = -3.5
+				gallery.artworks[i].material.opacity = Math.min(((frameCount / gallery.time) % gallery.artworks.length - i) * 10, 1)
+			}
+			else if(display_index == (i + 1) % gallery.artworks.length) {
+				gallery.artworks[i].position.z = -3.51
+				gallery.artworks[i].material.opacity = 1
+			}
+			else gallery.artworks[i].position.z = -3.52
+		}
+	}
+}
+
 new THREE.GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
 new THREE.TextureLoader().load('./assets/baked.png', image => {
 	image.flipY = false
@@ -65,45 +108,39 @@ new THREE.TextureLoader().load('./assets/baked.png', image => {
 
 			if(child.name == 'Can') {
 				interactiveObjects.push(child)
-				child.click = [
-					`這是建模建的很隨便的垃圾桶`,
-					`或是回收桶之類的`
-				]
+				child.click = dialogue1
 			}
-
 			if(child.name == 'Fence2') {
 				interactiveObjects.push(child)
-				child.click = [
-					`這是在前景的柵欄`,
-					`因為畫草圖的時候覺得前景需要一些物件 讓整體的空間感更平衡`,
-					`但其實假設這個場景的概念是一個車站的話 柵欄蓋在這裡就很莫名其妙`,
-					`......`
-				]
+				child.click = dialogue2
 			}
-
 			if(child.name == 'Lamp') {
 				interactiveObjects.push(child)
-				child.click = [
-					`這裡有亮亮的燈`,
-					`因為光影貼圖是預先烘焙上去的 所以燈關不掉`
-				]
+				child.click = dialogue3
 			}
 		}
 	})
 	scene.add(gltf.scene)
 })})
 
-new THREE.TextureLoader(loadingManager).load('./assets/image.png', texture => {
-	addImage({
+new THREE.TextureLoader(loadingManager).load('./assets/artwork1.jpg', texture => {
+	gallery.addImage({
 		texture: texture, 
-		scale: { x: 1.6 * 3.5, y: 0.9 * 3.5 },
-		position: { x: 0, y: 3.63, z: -3.5 },
-		onclick: [
-			'你看這是我畫的畫',
-			'要不要到 Pixiv 看看大圖？',
-			'可是你不能拒絕耶',
-			() => { window.open('https://www.pixiv.net/artworks/97978612', '_blank') }
-		]
+		onclick: dialogue4
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/artwork2.jpg', texture => {
+	gallery.addImage({
+		texture: texture, 
+		onclick: dialogue10
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/artwork3.jpg', texture => {
+	gallery.addImage({
+		texture: texture,
+		onclick: () => {}
 	})
 })
 
@@ -139,11 +176,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/sketch.jpg', texture => {
 		scale: { x: 2, y: 1.5 },
 		position: { x: -4.2, y: 2.8, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 3 },
-		onclick: [
-			'這張圖是這個 3D 網頁的草稿',
-			'我本來覺得畫得很好 畫面稍微雜亂但豐富 有點魚眼效果但有張力的透視',
-			'結果我 3D 建模變成這個樣子 :('
-		]
+		onclick: dialogue5
 	})
 })
 
@@ -154,10 +187,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => 
 		scale: { x: 0.8, y: 0.68 },
 		position: { x: 6.02, y: 4.87, z: 2.95 },
 		rotation: { x: 0, y: -31, z: 0 },
-		onclick: [
-			'歡迎到我的 Twitter 看看！',
-			() => { window.open('https://twitter.com/s24egao', '_blank') }
-		]
+		onclick: dialogue6
 	})
 })
 
@@ -168,9 +198,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/too_wide.jpg', texture =>
 		scale: { x: 3, y: 0.6 },
 		position: { x: -7.5, y: 3.5, z: 0 },
 		rotation: { x: 0, y: 60, z: 90 },
-		onclick: [
-			'騙人的吧！你的螢幕也太寬了'
-		]
+		onclick: dialogue7
 	})
 })
 
@@ -198,12 +226,7 @@ setTimeout(() => {
 		emissive: 0xffffff,
 		scale: { x: 1, y: 1.8 },
 		position: { x: -3.64, y: 1.2, z: -1.8 },
-		onclick: [
-			`Hello, my name is 木白, I'm a student interested in drawing, visual design, anime and game development.`,
-			`Welcome to my website! This is a 3D space made with three.js.`,
-			`3D modeling and texture baking was made with Blender, and 2D animations was made with After Effects and 2D canvas.`,
-			`Hope you enjoy it!`
-		]
+		onclick: dialogue8
 	})
 }, 1000)
 
@@ -215,12 +238,7 @@ addImage({
 	scale: { x: 3.75, y: 1.8 },
 	position: { x: 5.96, y: 5.3, z: -0.3 },
 	rotation: { x: 0, y: -90, z: 0 },
-	onclick: [
-		`現在是 ${new Date().getHours()} 點`,
-		`然後 ${new Date().getMinutes()} 分`,
-		`然後 ${new Date().getSeconds()} 秒`,
-		':)',
-	]
+	onclick: dialogue9
 })
 
 function animate() {
@@ -231,6 +249,7 @@ function animate() {
 	camera.lookAt(3 + lookOffsetX * 0.8, 4.2 - lookOffsetY * 0.8, -1)
 	camera.position.set(-3.6 + lookOffsetX * 0.6, 3.6 - lookOffsetY * 0.6, 12 + lookOffsetX)
 
+	gallery.update()
 	particles.update()
 	for(let texture of animatedTextures) {
 		texture.needsUpdate = true
@@ -241,10 +260,10 @@ function animate() {
 animate()
 
 let ray = new THREE.Raycaster()
-window.addEventListener('click', e => {
+renderer.domElement.addEventListener('click', e => {
 	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
 	let intersects = ray.intersectObjects(interactiveObjects)
-	if(intersects.length > 0) if(intersects[0].object.click) loadDialogue(intersects[0].object.click)
+	if(intersects.length > 0) if(intersects[0].object.click) intersects[0].object.click()
 })
 
 window.addEventListener('mousemove', e => {
@@ -253,8 +272,8 @@ window.addEventListener('mousemove', e => {
 
 	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
 	let intersects = ray.intersectObjects(interactiveObjects)
-	if(intersects.length > 0) document.body.style.cursor = 'pointer'
-	else document.body.style.cursor = 'default'
+	if(intersects.length > 0) renderer.domElement.style.cursor = 'pointer'
+	else renderer.domElement.style.cursor = 'default'
 })
 
 window.addEventListener('resize', e => {
