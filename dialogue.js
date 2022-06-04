@@ -84,7 +84,7 @@ const dialogue2 = () => loadDialogue([[
 
 const dialogue3 = () => loadDialogue([[
 	'這裡有亮亮的燈',
-	'因為光影貼圖是預先烘焙上去的 所以燈關不掉'
+	'因為光影貼圖是預先烘焙上去的，所以燈關不掉'
 ], [
 	'This is light tube',
 	'Because the texture was baked, so we can\'t turn it off'
