@@ -86,10 +86,12 @@ let gallery = {
 			if(display_index == i) {
 				gallery.artworks[i].position.z = -3.5
 				gallery.artworks[i].material.opacity = Math.min(((frameCount / gallery.time) % gallery.artworks.length - i) * 10, 1)
+				gallery.artworks[i].material.map.needsUpdate = true
 			}
 			else if(display_index == (i + 1) % gallery.artworks.length) {
 				gallery.artworks[i].position.z = -3.51
 				gallery.artworks[i].material.opacity = 1
+				gallery.artworks[i].material.map.needsUpdate = true
 			}
 			else gallery.artworks[i].position.z = -3.52
 		}
@@ -125,14 +127,14 @@ new THREE.TextureLoader().load('./assets/baked.png', image => {
 
 new THREE.TextureLoader(loadingManager).load('./assets/artwork1.jpg', texture => {
 	gallery.addImage({
-		texture: texture, 
+		texture: texture,
 		onclick: dialogue4
 	})
 })
 
 new THREE.TextureLoader(loadingManager).load('./assets/artwork2.jpg', texture => {
 	gallery.addImage({
-		texture: texture, 
+		texture: texture,
 		onclick: dialogue10
 	})
 })
@@ -140,7 +142,31 @@ new THREE.TextureLoader(loadingManager).load('./assets/artwork2.jpg', texture =>
 new THREE.TextureLoader(loadingManager).load('./assets/artwork3.jpg', texture => {
 	gallery.addImage({
 		texture: texture,
-		onclick: () => {}
+		onclick: dialogue11
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/artwork4.jpg', texture => {
+	gallery.addImage({
+		texture: texture,
+		onclick: dialogue12
+	})
+})
+
+const video3 = document.getElementById('video3')
+video3.play()
+setTimeout(() => {
+	let texture = new THREE.VideoTexture(video3)
+	gallery.addImage({
+		texture: texture,
+		onclick: () => { window.open('https://s24egao.github.io/motion', '_blank') }
+	})
+}, 1000)
+
+new THREE.TextureLoader(loadingManager).load('./assets/artwork6.jpg', texture => {
+	gallery.addImage({
+		texture: texture,
+		onclick: dialogue13
 	})
 })
 
@@ -159,6 +185,26 @@ new THREE.TextureLoader(loadingManager).load('./assets/icon.png', texture => {
 		scale: { x: 1, y: 1 },
 		position: { x: 4.8, y: 2.6, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 6 }
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/youtube.jpg', texture => {
+	addImage({
+		texture: texture, 
+		scale: { x: 0.5, y: 0.5 },
+		position: { x: 3.8, y: 2.9, z: -3.7 },
+		rotation: { x: 0, y: 0, z: -8 },
+		onclick: () => { window.open('https://www.youtube.com/channel/UCudLKarfLoiMVZW0zyApMVA', '_blank') }
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/pixiv.jpg', texture => {
+	addImage({
+		texture: texture, 
+		scale: { x: 0.5, y: 0.5 },
+		position: { x: 3.6, y: 2.2, z: -3.7 },
+		rotation: { x: 0, y: 0, z: 3 },
+		onclick: () => { window.open('https://www.pixiv.net/users/80929565', '_blank') }
 	})
 })
 

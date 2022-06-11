@@ -151,3 +151,28 @@ const dialogue10 = () => loadDialogue([[
 ], [
 	'This is a Violin 3DCG made with Blender'
 ]])
+
+const dialogue11 = () => loadDialogue([[
+	'你可能已經注意到，每次進入這個網頁的時候圖片出現的順序並不一致',
+	'大概是因為每張圖片載入完成的時間不一樣'
+], [
+	'You might notice the order of these image may be different each time you visit this webpage',
+	'It\'s probably affect by loading speed of each image'
+]])
+
+const dialogue12 = () => loadDialogue([[
+	'這張 3D 圖其實原本不是長這樣',
+	'我其實在這些圖片顯示的地方放了一個光源',
+	'所以所有的圖片看起來都比曝光度更高',
+	'這張尤其明顯'
+], [
+	'These 3DCG looks different with the original image',
+	'It\'s because I added a light in front of these images in this 3D space',
+	'So all images looks more brightness',
+]])
+
+const dialogue13 = () => loadDialogue([[
+	'你可以在瀏覽器的控制台輸入 gallery.time = 60 來改變圖片變換的頻率'
+], [
+	'You can run \'gallery.time = 60\' in console to change the time between switching images'
+]])
