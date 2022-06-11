@@ -163,7 +163,7 @@ const dialogue11 = () => loadDialogue([[
 const dialogue12 = () => loadDialogue([[
 	'這張 3D 圖其實原本不是長這樣',
 	'我其實在這些圖片顯示的地方放了一個光源',
-	'所以所有的圖片看起來都比曝光度更高',
+	'所以所有的圖片看起來都比原本的曝光度更高',
 	'這張尤其明顯'
 ], [
 	'These 3DCG looks different with the original image',
