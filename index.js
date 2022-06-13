@@ -237,6 +237,17 @@ new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => 
 	})
 })
 
+new THREE.TextureLoader(loadingManager).load('./assets/moon.jpg', texture => {
+	addImage({
+		alphaMap: texture,
+		emissive: 0xffffff,
+		scale: { x: 5, y: 5 },
+		position: { x: 52.8, y: 7, z: -39.2 },
+		rotation: { x: 0, y: 279.2, z: 0 },
+		onclick: () => { toggleDarkMode() }
+	})
+})
+
 new THREE.TextureLoader(loadingManager).load('./assets/too_wide.jpg', texture => {
 	addImage({
 		alphaMap: texture,
@@ -357,4 +368,18 @@ function addImage(image) {
 	}
 	scene.add(mesh)
 	return mesh
+}
+
+let darkMode = false
+function toggleDarkMode() {
+	darkMode = !darkMode
+	if(darkMode) {
+		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
+		child.material.color = new THREE.Color(0x222222) })
+	loadDialogue([[ '夜間模式已開啟' ], [ 'Night mode enabled' ]])
+	} else {
+		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
+		child.material.color = new THREE.Color(0xffffff) })
+	loadDialogue([[ '夜間模式已關閉' ], [ 'Night mode disabled' ]])
+	}
 }
