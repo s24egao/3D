@@ -67,6 +67,7 @@ scene.add(particles.mesh)
 
 let gallery = {
 	time: 600,
+	frameCount: 0,
 	artworks: [],
 	addImage: image => {
 		let geometry = new THREE.PlaneGeometry(5.6, 3.15)
@@ -81,11 +82,12 @@ let gallery = {
 		gallery.artworks.push(mesh)
 	},
 	update: () => {
-		let display_index = parseInt(frameCount / gallery.time) % gallery.artworks.length
+		gallery.frameCount++
+		let display_index = parseInt(gallery.frameCount / gallery.time) % gallery.artworks.length
 		for(let i = 0; i < gallery.artworks.length; i++) {
 			if(display_index == i) {
 				gallery.artworks[i].position.z = -3.5
-				gallery.artworks[i].material.opacity = Math.min(((frameCount / gallery.time) % gallery.artworks.length - i) * 10, 1)
+				gallery.artworks[i].material.opacity = Math.min(((gallery.frameCount / gallery.time) % gallery.artworks.length - i) * 10, 1)
 				gallery.artworks[i].material.map.needsUpdate = true
 			}
 			else if(display_index == (i + 1) % gallery.artworks.length) {
@@ -97,6 +99,12 @@ let gallery = {
 		}
 	}
 }
+
+let skipButton = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 0.05), new THREE.MeshStandardMaterial())
+skipButton.position.set(0, 1.9, -3.49)
+skipButton.click = () => { gallery.frameCount += Math.max(0, 600 - gallery.frameCount % 600) }
+interactiveObjects.push(skipButton)
+scene.add(skipButton)
 
 new THREE.GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
 new THREE.TextureLoader().load('./assets/baked.png', image => {
@@ -167,6 +175,13 @@ new THREE.TextureLoader(loadingManager).load('./assets/artwork6.jpg', texture =>
 	gallery.addImage({
 		texture: texture,
 		onclick: dialogue13
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/artwork7.jpg', texture => {
+	gallery.addImage({
+		texture: texture,
+		onclick: () => {}
 	})
 })
 
