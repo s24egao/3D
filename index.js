@@ -199,7 +199,8 @@ new THREE.TextureLoader(loadingManager).load('./assets/icon.png', texture => {
 		texture: texture, 
 		scale: { x: 1, y: 1 },
 		position: { x: 4.8, y: 2.6, z: -3.7 },
-		rotation: { x: 0, y: 0, z: 6 }
+		rotation: { x: 0, y: 0, z: 6 },
+		onclick: () => { window.open('https://s24egao.github.io') }
 	})
 })
 
@@ -220,6 +221,14 @@ new THREE.TextureLoader(loadingManager).load('./assets/pixiv.jpg', texture => {
 		position: { x: 3.6, y: 2.2, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 3 },
 		onclick: () => { window.open('https://www.pixiv.net/users/80929565', '_blank') }
+	})
+})
+
+new THREE.TextureLoader(loadingManager).load('./assets/text2.jpg', texture => {
+	addImage({
+		alphaMap: texture, 
+		scale: { x: 1, y: 1 },
+		position: { x: 4.8, y: 1.6, z: -3.7 }
 	})
 })
 
@@ -368,7 +377,8 @@ function addImage(image) {
 		alphaMap: image.alphaMap,
 		color: (image.color)? image.color : 0xffffff,
 		emissive: (image.emissive)? image.emissive : 0x000000,
-		transparent: true
+		transparent: true,
+		depthWrite: false
 	})
 	let mesh = new THREE.Mesh(geometry, material)
 	if(image.position) mesh.position.set(image.position.x, image.position.y, image.position.z)
