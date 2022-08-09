@@ -1,7 +1,8 @@
+import * as THREE from 'three'
+import { GLTFLoader } from 'https://unpkg.com/three@0.143.0/examples/jsm/loaders/GLTFLoader.js'
+
 if(window.innerWidth / window.innerHeight < 1) $('#wide-screen').css('opacity', '1')
 else $('#wide-screen').css('opacity', '0')
-
-console.log('要更快 還要更快')
 
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -13,12 +14,6 @@ loadingManager.onProgress = (url, loaded, total) => {
 			$('#language').css('opacity', 1)
 		}, 1000)
 	}
-}
-
-function select_language(i) {
-	language = i
-	$('#loading').css('opacity', 0)
-	setTimeout(() => $('#loading').css('display', 'none'), 250)
 }
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -106,7 +101,7 @@ skipButton.click = () => { gallery.frameCount += Math.max(0, 600 - gallery.frame
 interactiveObjects.push(skipButton)
 scene.add(skipButton)
 
-new THREE.GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
+new GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
 new THREE.TextureLoader().load('./assets/baked.png', image => {
 	image.flipY = false
 	let material = new THREE.MeshBasicMaterial({ map: image })
