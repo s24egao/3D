@@ -156,15 +156,13 @@ new THREE.TextureLoader(loadingManager).load('./assets/artwork4.jpg', texture =>
 	})
 })
 
-const video3 = document.getElementById('video3')
-video3.play()
-setTimeout(() => {
+addVideo(document.getElementById('video3'), () => {
 	let texture = new THREE.VideoTexture(video3)
 	gallery.addImage({
 		texture: texture,
 		onclick: () => { window.open('https://s24egao.github.io/motion', '_blank') }
 	})
-}, 1000)
+})
 
 new THREE.TextureLoader(loadingManager).load('./assets/artwork6.jpg', texture => {
 	gallery.addImage({
@@ -278,9 +276,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/too_wide.jpg', texture =>
 	})
 })
 
-const video1 = document.getElementById('video1')
-video1.play()
-setTimeout(() => {
+addVideo(document.getElementById('video1'), () => {
 	let texture = new THREE.VideoTexture(video1)
 	animatedTextures.push(texture)
 	addImage({
@@ -290,11 +286,9 @@ setTimeout(() => {
 		position: { x: 6.06, y: 2.45, z: 2.88 },
 		rotation: { x: 0, y: -17, z: 1.8 }
 	})
-}, 1000)
+})
 
-const video2 = document.getElementById('video2')
-video2.play()
-setTimeout(() => {
+addVideo(document.getElementById('video2'), () => {
 	let texture = new THREE.VideoTexture(video2)
 	animatedTextures.push(texture)
 	addImage({
@@ -304,7 +298,7 @@ setTimeout(() => {
 		position: { x: -3.64, y: 1.2, z: -1.8 },
 		onclick: dialogue8
 	})
-}, 1000)
+})
 
 const display = new THREE.CanvasTexture(clock.canvas)
 animatedTextures.push(display)
@@ -388,6 +382,14 @@ function addImage(image) {
 	}
 	scene.add(mesh)
 	return mesh
+}
+
+function addVideo(video, onload) {
+	video.play()
+	if(video.readyState > 0) {
+		onload()
+	}
+	else video.addEventListener('loadeddata', onload)
 }
 
 let darkMode = false
