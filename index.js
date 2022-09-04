@@ -1,6 +1,3 @@
-import * as THREE from 'three'
-import { GLTFLoader } from 'https://unpkg.com/three@0.143.0/examples/jsm/loaders/GLTFLoader.js'
-
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	document.querySelector('#progress div div').style.width = `${loaded / total * 100}%`
@@ -98,7 +95,7 @@ skipButton.click = () => { gallery.frameCount += Math.max(0, 600 - gallery.frame
 interactiveObjects.push(skipButton)
 scene.add(skipButton)
 
-new GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
+new THREE.GLTFLoader(loadingManager).load('./assets/station.glb', gltf => {
 new THREE.TextureLoader().load('./assets/baked.png', image => {
 	image.flipY = false
 	let material = new THREE.MeshBasicMaterial({ map: image })
