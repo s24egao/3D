@@ -140,8 +140,8 @@
 
 		function select_language(i) {
 			language = i
-			$('#loading').css('opacity', 0)
-			setTimeout(() => $('#loading').css('display', 'none'), 250)
+			document.querySelector('#loading').style.opacity = 0
+			setTimeout(() => document.querySelector('#loading').style.display = 'none', 250)
 		}
 	</script>
 	<script src="index.js" type="module"></script>
