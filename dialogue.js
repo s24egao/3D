@@ -4,8 +4,8 @@ let text_index = 0
 
 function loadDialogue(dialogue) {
 	if(now_dialogues.length > 0) return
-	$('#dialogue-text').text('')
-	$('#dialogue').css('bottom', '0px')
+	document.querySelector('#dialogue-text').textContent = ''
+	document.querySelector('#dialogue').style.bottom = '0px'
 	text_index = 0
 	now_line = ''
 	setTimeout(() => {
@@ -15,9 +15,14 @@ function loadDialogue(dialogue) {
 }
 
 function nextLine() {
+	if(text_index < now_line.length) {
+		document.querySelector('#dialogue-text').textContent = now_line
+		text_index = now_line.length
+		return
+	}
 	if(now_dialogues.length <= 0) {
 		now_line = ''
-		$('#dialogue').css('bottom', '-300px')
+		document.querySelector('#dialogue').style.bottom = '-300px'
 		return
 	}
 	switch(typeof(now_dialogues[0])) {
@@ -36,7 +41,7 @@ function nextLine() {
 function loadText() {
 	if(text_index >= now_line.length) return
 	text_index++
-	if(now_line) $('#dialogue-text').text(now_line.slice(0, text_index))
+	document.querySelector('#dialogue-text').textContent = now_line.slice(0, text_index)
 	requestAnimationFrame(loadText)
 }
 

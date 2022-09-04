@@ -1,27 +1,24 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'https://unpkg.com/three@0.143.0/examples/jsm/loaders/GLTFLoader.js'
 
-if(window.innerWidth / window.innerHeight < 1) $('#wide-screen').css('opacity', '1')
-else $('#wide-screen').css('opacity', '0')
-
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
-	$('#progress div div').css('width', `${loaded / total * 100}%`)
+	document.querySelector('#progress div div').style.width = `${loaded / total * 100}%`
 	if(loaded / total >= 1) {
-		$('#language').css('display', 'flex')
+		document.querySelector('#language').style.display = 'flex'
 		setTimeout(() => {
-			$('#progress').css('opacity', 0)
-			$('#language').css('opacity', 1)
+			document.querySelector('#progress').style.opacity = 0
+			document.querySelector('#language').style.opacity = 1
 		}, 1000)
 	}
 }
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
-renderer.setSize(window.innerWidth, window.innerHeight)
-renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setSize(innerWidth, innerHeight)
+renderer.setPixelRatio(devicePixelRatio)
 document.body.appendChild(renderer.domElement)
 
-const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 1000)
+const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 1000)
 const scene = new THREE.Scene()
 scene.fog = new THREE.Fog(0x7788aa, 0, 150)
 scene.background = new THREE.Color(0x7788aa)
@@ -160,7 +157,7 @@ addVideo(document.getElementById('video3'), () => {
 	let texture = new THREE.VideoTexture(video3)
 	gallery.addImage({
 		texture: texture,
-		onclick: () => { window.open('https://s24egao.github.io/motion', '_blank') }
+		onclick: () => { open('https://s24egao.github.io/motion', '_blank') }
 	})
 })
 
@@ -193,7 +190,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/icon.png', texture => {
 		scale: { x: 1, y: 1 },
 		position: { x: 4.8, y: 2.6, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 6 },
-		onclick: () => { window.open('https://s24egao.github.io') }
+		onclick: () => { open('https://s24egao.github.io') }
 	})
 })
 
@@ -203,7 +200,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/youtube.jpg', texture => 
 		scale: { x: 0.5, y: 0.5 },
 		position: { x: 3.8, y: 2.9, z: -3.7 },
 		rotation: { x: 0, y: 0, z: -8 },
-		onclick: () => { window.open('https://www.youtube.com/channel/UCudLKarfLoiMVZW0zyApMVA', '_blank') }
+		onclick: () => { open('https://www.youtube.com/channel/UCudLKarfLoiMVZW0zyApMVA', '_blank') }
 	})
 })
 
@@ -213,7 +210,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/pixiv.jpg', texture => {
 		scale: { x: 0.5, y: 0.5 },
 		position: { x: 3.6, y: 2.2, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 3 },
-		onclick: () => { window.open('https://www.pixiv.net/users/80929565', '_blank') }
+		onclick: () => { open('https://www.pixiv.net/users/80929565', '_blank') }
 	})
 })
 
@@ -336,9 +333,9 @@ renderer.domElement.addEventListener('click', e => {
 	if(intersects.length > 0) if(intersects[0].object.click) intersects[0].object.click()
 })
 
-window.addEventListener('mousemove', e => {
-	mouseX = (e.clientX / window.innerWidth) * 2 - 1
-	mouseY = (e.clientY / window.innerHeight) * 2 - 1
+addEventListener('mousemove', e => {
+	mouseX = (e.clientX / innerWidth) * 2 - 1
+	mouseY = (e.clientY / innerHeight) * 2 - 1
 
 	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
 	let intersects = ray.intersectObjects(interactiveObjects)
@@ -346,13 +343,14 @@ window.addEventListener('mousemove', e => {
 	else renderer.domElement.style.cursor = 'default'
 })
 
-window.addEventListener('resize', e => {
-	camera.aspect = window.innerWidth / window.innerHeight
+onresize = e => {
+	camera.aspect = innerWidth / innerHeight
 	camera.updateProjectionMatrix()
-	renderer.setSize(window.innerWidth, window.innerHeight)
-	if(window.innerWidth / window.innerHeight < 1) $('#wide-screen').css('opacity', '1')
-	else $('#wide-screen').css('opacity', '0')
-})
+	renderer.setSize(innerWidth, innerHeight)
+	if(innerWidth / innerHeight < 1) document.querySelector('#wide-screen').style.opacity = '1'
+	else document.querySelector('#wide-screen').style.opacity = '0'
+}
+onresize()
 
 function lerp(a, b, f) {
 	return a + (b - a) * f
