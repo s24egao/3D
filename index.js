@@ -14,7 +14,6 @@ const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(innerWidth, innerHeight)
 renderer.setPixelRatio(devicePixelRatio)
 document.body.appendChild(renderer.domElement)
-
 const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 1000)
 const scene = new THREE.Scene()
 scene.fog = new THREE.Fog(0x7788aa, 0, 150)
@@ -65,6 +64,7 @@ let gallery = {
 		mesh.position.set(0, 3.63, -3.5)
 		if(image.onclick) {
 			mesh.click = image.onclick
+			mesh.text = image.text
 			interactiveObjects.push(mesh)
 		}
 		scene.add(mesh)
@@ -89,9 +89,112 @@ let gallery = {
 	}
 }
 
+function animate() {
+	requestAnimationFrame(animate)
+
+	lookOffsetX = lerp(lookOffsetX, mouseX, 0.1)
+	lookOffsetY = lerp(lookOffsetY, mouseY, 0.1)
+	camera.lookAt(3 + lookOffsetX * 0.8, 4.2 - lookOffsetY * 0.8, -1)
+	camera.position.set(-3.6 + lookOffsetX * 0.6, 3.6 - lookOffsetY * 0.6, 12 + lookOffsetX)
+
+	gallery.update()
+	particles.update()
+	for(let texture of animatedTextures) {
+		texture.needsUpdate = true
+	}
+
+	renderer.render(scene, camera)
+}
+animate()
+
+let ray = new THREE.Raycaster()
+renderer.domElement.addEventListener('click', e => {
+	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
+	let intersects = ray.intersectObjects(interactiveObjects)
+	if(intersects.length > 0) if(intersects[0].object.click) intersects[0].object.click()
+})
+
+addEventListener('mousemove', e => {
+	mouseX = (e.clientX / innerWidth) * 2 - 1
+	mouseY = (e.clientY / innerHeight) * 2 - 1
+
+	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
+	let intersects = ray.intersectObjects(interactiveObjects)
+	if(intersects.length > 0) {
+		renderer.domElement.style.cursor = 'none'
+		show(true, e.clientX, e.clientY, (intersects[0].object.text)? intersects[0].object.text[language] : '???')
+	} else {
+		renderer.domElement.style.cursor = 'default'
+		show(false, e.clientX, e.clientY, '')
+	}
+})
+
+onresize = e => {
+	camera.aspect = innerWidth / innerHeight
+	camera.updateProjectionMatrix()
+	renderer.setSize(innerWidth, innerHeight)
+	if(innerWidth / innerHeight < 1) document.querySelector('#wide-screen').style.opacity = '1'
+	else document.querySelector('#wide-screen').style.opacity = '0'
+}
+onresize()
+
+function lerp(a, b, f) {
+	return a + (b - a) * f
+}
+
+function addImage(image) {
+	let geometry = new THREE.PlaneGeometry(image.scale.x, image.scale.y)
+	let material 
+	if(!image.alphaMap) material = new THREE.MeshStandardMaterial({ map: image.texture })
+	else material = new THREE.MeshStandardMaterial({
+		alphaMap: image.alphaMap,
+		color: (image.color)? image.color : 0xffffff,
+		emissive: (image.emissive)? image.emissive : 0x000000,
+		transparent: true,
+		depthWrite: false
+	})
+	let mesh = new THREE.Mesh(geometry, material)
+	if(image.position) mesh.position.set(image.position.x, image.position.y, image.position.z)
+	if(image.rotation) {
+		mesh.rotation.x = image.rotation.x / 57.29577
+		mesh.rotation.y = image.rotation.y / 57.29577
+		mesh.rotation.z = image.rotation.z / 57.29577
+	}
+	if(image.onclick) {
+		mesh.click = image.onclick
+		mesh.text = image.text
+		interactiveObjects.push(mesh)
+	}
+	scene.add(mesh)
+	return mesh
+}
+
+function addVideo(video, onload) {
+	video.play()
+	if(video.readyState > 0) {
+		onload()
+	}
+	else video.addEventListener('loadeddata', onload)
+}
+
+let darkMode = false
+function toggleDarkMode() {
+	darkMode = !darkMode
+	if(darkMode) {
+		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
+		child.material.color = new THREE.Color(0x222222) })
+		loadDialogue([[ '夜間模式已開啟' ], [ 'Night mode enabled' ]])
+	} else {
+		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
+		child.material.color = new THREE.Color(0xffffff) })
+		loadDialogue([[ '夜間模式已關閉' ], [ 'Night mode disabled' ]])
+	}
+}
+
 let skipButton = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 0.05), new THREE.MeshStandardMaterial())
 skipButton.position.set(0, 1.9, -3.49)
 skipButton.click = () => { gallery.frameCount += Math.max(0, 600 - gallery.frameCount % 600) }
+skipButton.text = ['下一張圖片', 'next image']
 interactiveObjects.push(skipButton)
 scene.add(skipButton)
 
@@ -108,14 +211,17 @@ new THREE.TextureLoader().load('./assets/baked.png', image => {
 			if(child.name == 'Can') {
 				interactiveObjects.push(child)
 				child.click = dialogue1
+				child.text = ['垃圾桶', 'trash can']
 			}
 			if(child.name == 'Fence2') {
 				interactiveObjects.push(child)
 				child.click = dialogue2
+				child.text = ['柵欄', 'fence']
 			}
 			if(child.name == 'Lamp') {
 				interactiveObjects.push(child)
 				child.click = dialogue3
+				child.text = ['燈', 'Lamp']
 			}
 		}
 	})
@@ -187,7 +293,8 @@ new THREE.TextureLoader(loadingManager).load('./assets/icon.png', texture => {
 		scale: { x: 1, y: 1 },
 		position: { x: 4.8, y: 2.6, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 6 },
-		onclick: () => { open('https://s24egao.github.io') }
+		onclick: () => { open('https://s24egao.github.io') },
+		text: ['我的個人主網頁', 'my home website']
 	})
 })
 
@@ -197,7 +304,8 @@ new THREE.TextureLoader(loadingManager).load('./assets/youtube.jpg', texture => 
 		scale: { x: 0.5, y: 0.5 },
 		position: { x: 3.8, y: 2.9, z: -3.7 },
 		rotation: { x: 0, y: 0, z: -8 },
-		onclick: () => { open('https://www.youtube.com/channel/UCudLKarfLoiMVZW0zyApMVA', '_blank') }
+		onclick: () => { open('https://www.youtube.com/channel/UCudLKarfLoiMVZW0zyApMVA', '_blank') },
+		text: ['我的 youtube 頻道', 'my youtube channel']
 	})
 })
 
@@ -207,7 +315,8 @@ new THREE.TextureLoader(loadingManager).load('./assets/pixiv.jpg', texture => {
 		scale: { x: 0.5, y: 0.5 },
 		position: { x: 3.6, y: 2.2, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 3 },
-		onclick: () => { open('https://www.pixiv.net/users/80929565', '_blank') }
+		onclick: () => { open('https://www.pixiv.net/users/80929565', '_blank') },
+		text: ['我的 pixiv 帳號', 'my pixiv account']
 	})
 })
 
@@ -233,7 +342,8 @@ new THREE.TextureLoader(loadingManager).load('./assets/sketch.jpg', texture => {
 		scale: { x: 2, y: 1.5 },
 		position: { x: -4.2, y: 2.8, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 3 },
-		onclick: dialogue5
+		onclick: dialogue5,
+		text: ['草稿', 'sketch']
 	})
 })
 
@@ -244,7 +354,8 @@ new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => 
 		scale: { x: 0.8, y: 0.68 },
 		position: { x: 6.02, y: 4.87, z: 2.95 },
 		rotation: { x: 0, y: -31, z: 0 },
-		onclick: dialogue6
+		onclick: dialogue6,
+		text: ['我的 twitter 帳號', 'my twitter account']
 	})
 })
 
@@ -255,7 +366,8 @@ new THREE.TextureLoader(loadingManager).load('./assets/moon.jpg', texture => {
 		scale: { x: 5, y: 5 },
 		position: { x: 52.8, y: 7, z: -39.2 },
 		rotation: { x: 0, y: 279.2, z: 0 },
-		onclick: () => { toggleDarkMode() }
+		onclick: () => { toggleDarkMode() },
+		text: ['夜間模式', 'night mode']
 	})
 })
 
@@ -290,113 +402,20 @@ addVideo(document.getElementById('video2'), () => {
 		emissive: 0xffffff,
 		scale: { x: 1, y: 1.8 },
 		position: { x: -3.64, y: 1.2, z: -1.8 },
-		onclick: dialogue8
+		onclick: dialogue8,
+		text: ['關於我', 'about me']
 	})
 })
 
-const display = new THREE.CanvasTexture(clock.canvas)
-animatedTextures.push(display)
+const clock_display = new THREE.CanvasTexture(clock.canvas)
+animatedTextures.push(clock_display)
 addImage({
-	alphaMap: display,
+	alphaMap: clock_display,
 	emissive: 0xffffff,
 	scale: { x: 3.75, y: 1.8 },
 	position: { x: 5.96, y: 5.3, z: -0.3 },
 	rotation: { x: 0, y: -90, z: 0 },
-	onclick: dialogue9
+	onclick: dialogue9,
+	text: ['電子鐘', 'digital clock']
 })
 
-function animate() {
-	requestAnimationFrame(animate)
-
-	lookOffsetX = lerp(lookOffsetX, mouseX, 0.1)
-	lookOffsetY = lerp(lookOffsetY, mouseY, 0.1)
-	camera.lookAt(3 + lookOffsetX * 0.8, 4.2 - lookOffsetY * 0.8, -1)
-	camera.position.set(-3.6 + lookOffsetX * 0.6, 3.6 - lookOffsetY * 0.6, 12 + lookOffsetX)
-
-	gallery.update()
-	particles.update()
-	for(let texture of animatedTextures) {
-		texture.needsUpdate = true
-	}
-
-	renderer.render(scene, camera)
-}
-animate()
-
-let ray = new THREE.Raycaster()
-renderer.domElement.addEventListener('click', e => {
-	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
-	let intersects = ray.intersectObjects(interactiveObjects)
-	if(intersects.length > 0) if(intersects[0].object.click) intersects[0].object.click()
-})
-
-addEventListener('mousemove', e => {
-	mouseX = (e.clientX / innerWidth) * 2 - 1
-	mouseY = (e.clientY / innerHeight) * 2 - 1
-
-	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
-	let intersects = ray.intersectObjects(interactiveObjects)
-	if(intersects.length > 0) renderer.domElement.style.cursor = 'pointer'
-	else renderer.domElement.style.cursor = 'default'
-})
-
-onresize = e => {
-	camera.aspect = innerWidth / innerHeight
-	camera.updateProjectionMatrix()
-	renderer.setSize(innerWidth, innerHeight)
-	if(innerWidth / innerHeight < 1) document.querySelector('#wide-screen').style.opacity = '1'
-	else document.querySelector('#wide-screen').style.opacity = '0'
-}
-onresize()
-
-function lerp(a, b, f) {
-	return a + (b - a) * f
-}
-
-function addImage(image) {
-	let geometry = new THREE.PlaneGeometry(image.scale.x, image.scale.y)
-	let material 
-	if(!image.alphaMap) material = new THREE.MeshStandardMaterial({ map: image.texture })
-	else material = new THREE.MeshStandardMaterial({
-		alphaMap: image.alphaMap,
-		color: (image.color)? image.color : 0xffffff,
-		emissive: (image.emissive)? image.emissive : 0x000000,
-		transparent: true,
-		depthWrite: false
-	})
-	let mesh = new THREE.Mesh(geometry, material)
-	if(image.position) mesh.position.set(image.position.x, image.position.y, image.position.z)
-	if(image.rotation) {
-		mesh.rotation.x = image.rotation.x / 57.29577
-		mesh.rotation.y = image.rotation.y / 57.29577
-		mesh.rotation.z = image.rotation.z / 57.29577
-	}
-	if(image.onclick) {
-		mesh.click = image.onclick
-		interactiveObjects.push(mesh)
-	}
-	scene.add(mesh)
-	return mesh
-}
-
-function addVideo(video, onload) {
-	video.play()
-	if(video.readyState > 0) {
-		onload()
-	}
-	else video.addEventListener('loadeddata', onload)
-}
-
-let darkMode = false
-function toggleDarkMode() {
-	darkMode = !darkMode
-	if(darkMode) {
-		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
-		child.material.color = new THREE.Color(0x222222) })
-	loadDialogue([[ '夜間模式已開啟' ], [ 'Night mode enabled' ]])
-	} else {
-		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
-		child.material.color = new THREE.Color(0xffffff) })
-	loadDialogue([[ '夜間模式已關閉' ], [ 'Night mode disabled' ]])
-	}
-}

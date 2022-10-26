@@ -13,14 +13,26 @@
 	<link rel="icon" type="image" href="assets/icon.png">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;900&display=swap" rel="stylesheet">
 	<style>
-		html { overflow: hidden; }
-		body { margin: 0px; }
+		html { 
+			overflow: hidden;
+		}
+
+		body {
+			margin: 0px;
+			user-select: none;
+		}
 
 		@keyframes dialogue {
-			from { opacity: 1; }
-			to{ opacity: 0; }
+			from { transform: rotate(0deg); }
+			to { transform: rotate(90deg); }
+		}
+
+		@keyframes text {
+			0% { left: 0px; right: auto; width: 0%; }
+			50% { width: 100%; }
+			100% { left: auto; right: 0px; width: 0%; }
 		}
 
 		#dialogue {
@@ -61,10 +73,6 @@
 			box-sizing: border-box;
 		}
 
-		div {
-			user-select: none;
-		}
-
 		@media screen and (max-width: 900px) {
 			#dialogue {
 				height: 180px;
@@ -78,32 +86,34 @@
 	</style>
 </head>
 <body>
-	<div id="loading" style="background: white; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; transition-duration: 0.5s; z-index: 1;">
+	<div id="loading" style="background: white; position: fixed; width: 100%; height: 100%; transition-duration: 0.5s; z-index: 3;">
 		<div id="progress" style="position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; transition-duration: 0.5s;">
-			<div style="margin: 20px; color: #7788aa; font-family: Noto Sans TC; font-size: 24px;">Loading...</div>
+			<div style="margin: 20px; color: #7788aa; font: 24px Noto Sans TC;">Loading...</div>
 			<div style="width: 30%; height: 3px; background: #dddddd;">
 				<div style="width: 0%; height: 100%; background: #7788aa; transition-duration: 1s"></div>
 			</div>
 		</div>
 		<div id="language" style="position: fixed; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; transition-duration: 0.5s; opacity: 0;">
-			<div style="margin: 20px; color: #7788aa; font-family: Noto Sans TC; font-size: 30px; cursor: pointer;" onclick="select_language(0)">中文</div>
-			<div style="margin: 20px; color: #7788aa; font-family: Noto Sans TC; font-size: 30px; cursor: pointer;" onclick="select_language(1)">English</div>
+			<div style="margin: 20px; color: #7788aa; font: 30px Noto Sans TC; cursor: pointer;" onclick="select_language(0)">中文</div>
+			<div style="margin: 20px; color: #7788aa; font: 30px Noto Sans TC; cursor: pointer;" onclick="select_language(1)">English</div>
 		</div>
 	</div>
-	<div id="wide-screen" style="background: white; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; transition-duration: 0.5s; z-index: 1; pointer-events: none; color: #7788aa; font-family: Noto Sans TC; font-size: 36px; opacity: 0; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
+	<div id="wide-screen" style="background: white; position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition-duration: 0.5s; z-index: 3; pointer-events: none; color: #7788aa; font: 300 36px Noto Sans TC; opacity: 0; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
 	<div id="dialogue">
 		<div style="position: relative; width: 75%; height: 100%; cursor: pointer;" onclick="nextLine()">
 			<div id="dialogue-panel"></div>
-			<div style="background: #7788aa; position: absolute; top: 0px; left: -16px; width: 16px; height: 100%;"></div>
-			<div style="background: #7788aa; position: absolute; top: 0px; right: -16px; width: 16px; height: 100%;"></div>
-			<div style="animation: dialogue 0.5s 0s infinite alternate-reverse ease-in-out; position: absolute; bottom: 20px; right: 60px; font-family: Noto Sans TC; font-size: 42px; color: #7788aa;">...</div>
+			<div style="background: white; position: absolute; top: 0px; left: -12px; width: 6px; height: 100%;"></div>
+			<div style="background: white; position: absolute; top: 0px; right: -12px; width: 6px; height: 100%;"></div>
+			<div style="animation: dialogue 1s 0s infinite ease-in-out; position: absolute; bottom: 30px; right: 45px; font: 42px Noto Sans TC; color: #7788aa; width: 30px; height: 30px; border: solid 2px #7788aa"></div>
 			<div id="dialogue-text"></div>
 		</div>
 	</div>
+	<div id="title" style="font: 900 80px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 0px; line-height: 1;">3D WEBPAGE<div style="position: absolute; top: 0px; height: 100%; background: white;"></div></div>
+	<div style="font: 900 18px Noto Sans TC; color: #7788aa; position: fixed; margin: 20px; right: 0px; top: 90px; background: white; padding: 3px;">Created by 木白</div>
 	<canvas id="clock" width="600" height="288" style="display: none;"></canvas>
-	<video src="assets/video1.mp4" id="video1" style="display: none;" autoplay loop muted playsinline disablepictureinpicture></video>
-	<video src="assets/video2.mp4" id="video2" style="display: none;" autoplay loop muted playsinline disablepictureinpicture></video>
-	<video src="assets/artwork5.mp4" id="video3" style="display: none;" autoplay loop muted playsinline disablepictureinpicture></video>
+	<video src="assets/video1.mp4" id="video1" style="display: none;" autoplay loop muted playsinline></video>
+	<video src="assets/video2.mp4" id="video2" style="display: none;" autoplay loop muted playsinline></video>
+	<video src="assets/artwork5.mp4" id="video3" style="display: none;" autoplay loop muted playsinline></video>
 	<script src="dialogue.js"></script>
 	<script type="text/javascript">
 		let clock = document.getElementById('clock').getContext('2d')
@@ -118,10 +128,10 @@
 			let date = new Date()
 			clock.fillText((date.getHours() < 10)? 0 : parseInt(date.getHours() / 10), 50, 150)
 			clock.fillText((date.getHours() % 10), 130, 150)
-			clock.fillText(':', 195, 140)
+			clock.fillText(':', 195, 135)
 			clock.fillText((date.getMinutes() < 10)? 0 : parseInt(date.getMinutes() / 10), 260, 150)
 			clock.fillText((date.getMinutes() % 10), 340, 150)
-			clock.fillText(':', 405, 140)
+			clock.fillText(':', 405, 135)
 			clock.fillText((date.getSeconds() < 10)? 0 : parseInt(date.getSeconds() / 10), 470, 150)
 			clock.fillText((date.getSeconds() % 10), 550, 150)
 			clock.font = '70px Noto Sans TC'
@@ -133,11 +143,15 @@
 
 		function select_language(i) {
 			language = i
+			document.querySelector('#title').style.color = 'transparent'
 			document.querySelector('#loading').style.opacity = 0
-			setTimeout(() => document.querySelector('#loading').style.display = 'none', 250)
+			document.querySelector('#title div').style.animation = 'text 1s 0s ease-in-out'
+			setTimeout(() => document.querySelector('#loading').style.display = 'none', 500)
+			setTimeout(() => document.querySelector('#title').style.color = 'white', 500)
 		}
 	</script>
-	<script src="https://unpkg.com/three@0.143.0/build/three.js"></script>
+	<script src="show_info.js"></script>
+	<script src="https://unpkg.com/three@0.143.0/build/three.min.js"></script>
 	<script src="https://unpkg.com/three@0.143.0/examples/js/loaders/GLTFLoader.js"></script>
 	<script src="index.js"></script>
 </body>
