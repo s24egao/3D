@@ -69,13 +69,22 @@ let message = [[
 	'Welcome to https://s24egao.github.io/3d',
 	'Blender is so hard',
 	':O'
-].join('               ')]
+].join('               '),
+[
+	'私は日本語の勉強を始めたばかりです',
+	'私は Web ページへようこそ',
+	':O',
+	'ごめん、この Web ページの日本語翻訳はまだ完了していません'
+].join('               '),
+]
 
 const dialogue1 = () => loadDialogue([[
 	'這是建模建的很隨便的垃圾桶',
 	'或是回收桶之類的'
 ], [
 	'This is a trash can with very lazy modeling'
+], [
+	'これはごみ箱です'
 ]])
 
 const dialogue2 = () => loadDialogue([[
@@ -85,6 +94,9 @@ const dialogue2 = () => loadDialogue([[
 	'......'
 ], [
 	'This is fence'
+], [
+	'これはフェンスです',
+	'......'
 ]])
 
 const dialogue3 = () => loadDialogue([[
@@ -93,6 +105,9 @@ const dialogue3 = () => loadDialogue([[
 ], [
 	'This is light tube',
 	'Because the texture was baked, so we can\'t turn it off'
+], [
+	'これはランプです',
+	'テクステャーはベークでしたので、ランプを切り替えができません'
 ]])
 
 const dialogue4 = () => loadDialogue([[
@@ -104,6 +119,9 @@ const dialogue4 = () => loadDialogue([[
 	'Look! this is my artwork!',
 	'Do you want to view it on Pixiv?',
 	() => { window.open('https://www.pixiv.net/artworks/97978612', '_blank') }
+], [
+	'これは私が描いたドット絵です',
+	() => { window.open('https://www.pixiv.net/artworks/97978612', '_blank') }
 ]])
 
 const dialogue5 = () => loadDialogue([[
@@ -113,6 +131,8 @@ const dialogue5 = () => loadDialogue([[
 ], [
 	'This is the original sketch when I\'m designing this scene',
 	'I think my drawing is good, but I feel this 3D scene looks totally different'
+], [
+	'これはこの Web ページの下書きです'
 ]])
 
 const dialogue6 = () => loadDialogue([[
@@ -121,12 +141,17 @@ const dialogue6 = () => loadDialogue([[
 ], [
 	'This is my Twitter account!',
 	() => { window.open('https://twitter.com/s24egao', '_blank') }
+], [
+	'これは私の twitter アカウントです',
+	() => { window.open('https://twitter.com/s24egao', '_blank') }
 ]])
 
 const dialogue7 = () => loadDialogue([[
 	'騙人的吧！你的螢幕也太寬了'
 ], [
 	'Your screen is too wide!'
+], [
+	'なぜあなたの画面はとても広いですが？'
 ]])
 
 const dialogue8 = () => loadDialogue([[
@@ -139,6 +164,10 @@ const dialogue8 = () => loadDialogue([[
 	'Welcome to my website! This is a 3D space made with three.js',
 	'3D model and baked texture was done in Blender, and 2D animations was made with After Effects and 2D canvas',
 	'Hope you enjoy it!'
+], [
+	'初めまして、木白です',
+	'私は Web ページへようこそ、ここでは three.js 作った 3D シーンです',
+	'楽しんでいただければ幸いだす!'
 ]])
 
 const dialogue9 = () => loadDialogue([[
@@ -149,12 +178,17 @@ const dialogue9 = () => loadDialogue([[
 ], [
 	`Now is ${new Date().getHours()} : ${new Date().getMinutes()} : ${new Date().getSeconds()}`,
 	':)'
+], [
+	`現在、${new Date().getHours()} 時 ${new Date().getMinutes()} 分 ${new Date().getSeconds()} 秒`,
+	':)'
 ]])
 
 const dialogue10 = () => loadDialogue([[
 	'這是用 Blender 做的小提琴',
 ], [
 	'This is a Violin 3DCG made with Blender'
+], [
+	'これは Blender 作ったバイオリンです'
 ]])
 
 const dialogue11 = () => loadDialogue([[
@@ -163,6 +197,8 @@ const dialogue11 = () => loadDialogue([[
 ], [
 	'You might notice the order of these image may be different each time you visit this webpage',
 	'It\'s probably affect by loading speed of each image'
+], [
+	'......'
 ]])
 
 const dialogue12 = () => loadDialogue([[
@@ -174,10 +210,14 @@ const dialogue12 = () => loadDialogue([[
 	'These 3DCG looks different with the original image',
 	'It\'s because I added a light in front of these images in this 3D space',
 	'So all images looks more brightness',
+], [
+	'......'
 ]])
 
 const dialogue13 = () => loadDialogue([[
 	'你可以在瀏覽器的控制台輸入 gallery.time = 60 來改變圖片變換的頻率'
 ], [
 	'You can run \'gallery.time = 60\' in console to change the time between switching images'
+], [
+	'......'
 ]])

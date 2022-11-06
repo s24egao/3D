@@ -183,18 +183,18 @@ function toggleDarkMode() {
 	if(darkMode) {
 		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
 		child.material.color = new THREE.Color(0x222222) })
-		loadDialogue([[ '夜間模式已開啟' ], [ 'Night mode enabled' ]])
+		loadDialogue([[ '夜間模式已開啟' ], [ 'Night mode enabled' ], [ 'ナイトモードを切り替えました' ]])
 	} else {
 		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) 
 		child.material.color = new THREE.Color(0xffffff) })
-		loadDialogue([[ '夜間模式已關閉' ], [ 'Night mode disabled' ]])
+		loadDialogue([[ '夜間模式已關閉' ], [ 'Night mode disabled' ], [ 'ナイトモードを切り替えました' ]])
 	}
 }
 
 let skipButton = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 0.05), new THREE.MeshStandardMaterial())
 skipButton.position.set(0, 1.9, -3.49)
 skipButton.click = () => { gallery.frameCount += Math.max(0, 600 - gallery.frameCount % 600) }
-skipButton.text = ['下一張圖片', 'next image']
+skipButton.text = ['下一張圖片', 'next image', '次の画像']
 interactiveObjects.push(skipButton)
 scene.add(skipButton)
 
@@ -211,17 +211,17 @@ new THREE.TextureLoader().load('./assets/baked.png', image => {
 			if(child.name == 'Can') {
 				interactiveObjects.push(child)
 				child.click = dialogue1
-				child.text = ['垃圾桶', 'trash can']
+				child.text = ['垃圾桶', 'trash can', 'ごみ箱']
 			}
 			if(child.name == 'Fence2') {
 				interactiveObjects.push(child)
 				child.click = dialogue2
-				child.text = ['柵欄', 'fence']
+				child.text = ['柵欄', 'fence', 'フェンス']
 			}
 			if(child.name == 'Lamp') {
 				interactiveObjects.push(child)
 				child.click = dialogue3
-				child.text = ['燈', 'Lamp']
+				child.text = ['燈', 'Lamp', 'ランプ']
 			}
 		}
 	})
@@ -294,7 +294,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/icon.png', texture => {
 		position: { x: 4.8, y: 2.6, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 6 },
 		onclick: () => { open('https://s24egao.github.io') },
-		text: ['我的個人主網頁', 'my home website']
+		text: ['我的個人主網頁', 'my home webpage', 'ホームポージ']
 	})
 })
 
@@ -305,7 +305,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/youtube.jpg', texture => 
 		position: { x: 3.8, y: 2.9, z: -3.7 },
 		rotation: { x: 0, y: 0, z: -8 },
 		onclick: () => { open('https://www.youtube.com/channel/UCudLKarfLoiMVZW0zyApMVA', '_blank') },
-		text: ['我的 youtube 頻道', 'my youtube channel']
+		text: ['我的 youtube 頻道', 'my youtube channel', 'youtube チャンエル']
 	})
 })
 
@@ -316,7 +316,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/pixiv.jpg', texture => {
 		position: { x: 3.6, y: 2.2, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 3 },
 		onclick: () => { open('https://www.pixiv.net/users/80929565', '_blank') },
-		text: ['我的 pixiv 帳號', 'my pixiv account']
+		text: ['我的 pixiv 帳號', 'my pixiv account', 'pixiv アカウント']
 	})
 })
 
@@ -343,7 +343,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/sketch.jpg', texture => {
 		position: { x: -4.2, y: 2.8, z: -3.7 },
 		rotation: { x: 0, y: 0, z: 3 },
 		onclick: dialogue5,
-		text: ['草稿', 'sketch']
+		text: ['草稿', 'sketch', '下書き']
 	})
 })
 
@@ -355,7 +355,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/twitter.png', texture => 
 		position: { x: 6.02, y: 4.87, z: 2.95 },
 		rotation: { x: 0, y: -31, z: 0 },
 		onclick: dialogue6,
-		text: ['我的 twitter 帳號', 'my twitter account']
+		text: ['我的 twitter 帳號', 'my twitter account', 'twitter アカウント']
 	})
 })
 
@@ -367,7 +367,7 @@ new THREE.TextureLoader(loadingManager).load('./assets/moon.jpg', texture => {
 		position: { x: 52.8, y: 7, z: -39.2 },
 		rotation: { x: 0, y: 279.2, z: 0 },
 		onclick: () => { toggleDarkMode() },
-		text: ['夜間模式', 'night mode']
+		text: ['夜間模式', 'night mode', 'ナイトモード']
 	})
 })
 
@@ -403,7 +403,7 @@ addVideo(document.getElementById('video2'), () => {
 		scale: { x: 1, y: 1.8 },
 		position: { x: -3.64, y: 1.2, z: -1.8 },
 		onclick: dialogue8,
-		text: ['關於我', 'about me']
+		text: ['關於我', 'about me', '自己紹介']
 	})
 })
 
@@ -416,6 +416,6 @@ addImage({
 	position: { x: 5.96, y: 5.3, z: -0.3 },
 	rotation: { x: 0, y: -90, z: 0 },
 	onclick: dialogue9,
-	text: ['電子鐘', 'digital clock']
+	text: ['電子鐘', 'digital clock', '時計']
 })
 

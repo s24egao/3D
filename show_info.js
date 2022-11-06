@@ -11,14 +11,12 @@ canvas.setAttribute('style', `position: fixed; width: ${innerWidth}px; height: $
 canvas.width = innerWidth * devicePixelRatio
 canvas.height = innerHeight * devicePixelRatio
 c.scale(devicePixelRatio, devicePixelRatio)
-c.lineWidth = 2
 
 addEventListener('resize', () => {
 	canvas.setAttribute('style', `position: fixed; width: ${innerWidth}px; height: ${innerHeight}px; pointer-events: none; z-index: 2;`)
 	canvas.width = innerWidth * devicePixelRatio
 	canvas.height = innerHeight * devicePixelRatio
 	c.scale(devicePixelRatio, devicePixelRatio)
-	c.lineWidth = 2
 })
 
 function show(d, x, y, text) {
@@ -46,6 +44,7 @@ function draw() {
 	c.fill()
 
 	c.strokeStyle = `rgb(255, 255, 255)`
+	c.lineWidth = 2
 	c.beginPath()
 	c.moveTo(info.x, info.y)
 	c.lineTo(info.x + 60 * info.transition * info.flipX, info.y + 60 * info.transition)
