@@ -155,12 +155,12 @@ const dialogue7 = () => loadDialogue([[
 ]])
 
 const dialogue8 = () => loadDialogue([[
-	'你好，我是木白。我喜歡畫畫、影像設計、動漫和遊戲開發',
+	'你好，我是木白。我喜歡畫畫、影像設計、動漫、寫程式和遊戲開發',
 	'歡迎來到我的網站！這裡是一個使用 three.js 所製作的場景',
 	'3D 建模和貼圖烘焙是在 Blender 裡完成的，而平面的動畫則是使用 After Effects 和 2D 的 Canvas 所製作的',
 	'希望能讓你覺得有趣！'
 ], [
-	'Hello, my name is 木白, I\'m a student interested in drawing, visual design, anime and game development',
+	'Hello, my name is 木白, I\'m interested in drawing, visual design, anime, programming and game development',
 	'Welcome to my website! This is a 3D space made with three.js',
 	'3D model and baked texture was done in Blender, and 2D animations was made with After Effects and 2D canvas',
 	'Hope you enjoy it!'
