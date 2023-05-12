@@ -2,11 +2,14 @@ const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	document.querySelector('#progress div div').style.width = `${loaded / total * 100}%`
 	if(loaded / total >= 1) {
-		document.querySelector('#language').style.display = 'flex'
-		setTimeout(() => {
-			document.querySelector('#progress').style.opacity = 0
-			document.querySelector('#language').style.opacity = 1
-		}, 1000)
+		setTimeout(() => { document.querySelector('#loading').style.opacity = 0
+		document.querySelector('#title').style.color = 'transparent'
+		document.querySelector('#loading').style.opacity = 0
+		document.querySelector('#title div').style.animation = 'text 1s 0s ease-in-out'
+		setTimeout(() => document.querySelector('#loading').style.display = 'none', 500)
+		setTimeout(() => document.querySelector('#title').style.color = 'white', 500)
+	 }, 500)
+		setTimeout(() => { document.querySelector('#loading').style.display = 'none' }, 1000)
 	}
 }
 

@@ -75,6 +75,7 @@
 
 		#logo div {
 			transition-duration: 0.3s;
+			background: white;
 		}
 
 		#logo:hover div {
@@ -102,11 +103,6 @@
 				<div style="width: 0%; height: 100%; background: #7788aa; transition-duration: 1s"></div>
 			</div>
 		</div>
-		<div id="language" style="position: fixed; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; transition-duration: 0.5s; opacity: 0;">
-			<div style="margin: 20px; color: #7788aa; font: 30px Noto Sans TC; cursor: pointer;" onclick="select_language(0, true)">中文</div>
-			<div style="margin: 20px; color: #7788aa; font: 30px Noto Sans TC; cursor: pointer;" onclick="select_language(2, true)">日本語</div>
-			<div style="margin: 20px; color: #7788aa; font: 30px Noto Sans TC; cursor: pointer;" onclick="select_language(1, true)">English</div>
-		</div>
 	</div>
 	<div id="wide-screen" style="background: white; position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition-duration: 0.5s; z-index: 3; pointer-events: none; color: #7788aa; font: 300 36px Noto Sans TC; opacity: 0; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
 	<div id="dialogue">
@@ -124,17 +120,17 @@
 	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 180px; cursor: pointer; text-decoration-line: underline;" onclick="select_language(2)">日本語</div>
 	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 210px; cursor: pointer; text-decoration-line: underline;" onclick="select_language(1)">English</div>
 	<div id="logo" style="width: 80px; height:80px; position: fixed; margin: 20px; right: 0px; bottom: 0px;">
-		<div style="position: absolute; width: 45%; height: 9%; top: 36%; left: 0%; background: white;"></div>
-		<div style="position: absolute; width: 9%; height: 45%; top: 27%; left: 18%; background: white;"></div>
-		<div style="position: absolute; width: 9%; height: 45%; top: 27%; left: 18%; background: white;"></div>
-		<div style="position: absolute; width: 9%; height: 18%; top: 54%; left: 0%; background: white;"></div>
-		<div style="position: absolute; width: 9%; height: 18%; top: 54%; left: 36%; background: white;"></div>
-		<div style="position: absolute; width: 9%; height: 9%; top: 27%; left: 63%; background: white;"></div>
-		<div style="position: absolute; width: 45%; height: 9%; top: 36%; left: 54%; background: white;"></div>
-		<div style="position: absolute; width: 9%; height: 36%; top: 36%; left: 54%; background: white;"></div>
-		<div style="position: absolute; width: 9%; height: 36%; top: 36%; left: 90%; background: white;"></div>
-		<div style="position: absolute; width: 18%; height: 9%; top: 54%; left: 63%; background: white;"></div>
-		<div style="position: absolute; width: 45%; height: 9%; top: 63%; left: 54%; background: white;"></div>
+		<div style="position: absolute; width: 45%; height: 9%; top: 36%; left: 0%;"></div>
+		<div style="position: absolute; width: 9%; height: 45%; top: 27%; left: 18%;"></div>
+		<div style="position: absolute; width: 9%; height: 45%; top: 27%; left: 18%;"></div>
+		<div style="position: absolute; width: 9%; height: 18%; top: 54%; left: 0%;"></div>
+		<div style="position: absolute; width: 9%; height: 18%; top: 54%; left: 36%;"></div>
+		<div style="position: absolute; width: 9%; height: 9%; top: 27%; left: 63%;"></div>
+		<div style="position: absolute; width: 45%; height: 9%; top: 36%; left: 54%;"></div>
+		<div style="position: absolute; width: 9%; height: 36%; top: 36%; left: 54%;"></div>
+		<div style="position: absolute; width: 9%; height: 36%; top: 36%; left: 90%;"></div>
+		<div style="position: absolute; width: 18%; height: 9%; top: 54%; left: 63%;"></div>
+		<div style="position: absolute; width: 45%; height: 9%; top: 63%; left: 54%;"></div>
 	</div>
 	<div>
 		<canvas id="clock" width="600" height="288" style="display: none;"></canvas>
@@ -169,14 +165,8 @@
 		}
 		update()
 
-		function select_language(i, play_transition) {
+		function select_language(i) {
 			language = i
-			if(!play_transition) return
-			document.querySelector('#title').style.color = 'transparent'
-			document.querySelector('#loading').style.opacity = 0
-			document.querySelector('#title div').style.animation = 'text 1s 0s ease-in-out'
-			setTimeout(() => document.querySelector('#loading').style.display = 'none', 500)
-			setTimeout(() => document.querySelector('#title').style.color = 'white', 500)
 		}
 	</script>
 	<script src="show_info.js"></script>

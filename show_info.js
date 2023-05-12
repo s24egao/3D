@@ -7,13 +7,12 @@ let c = canvas.getContext('2d')
 
 let info = { transition: 0, x: 0, y: 0, display: false, text: '', width: 150, flipX: 1 }
 
-canvas.setAttribute('style', `position: fixed; width: ${innerWidth}px; height: ${innerHeight}px; pointer-events: none; z-index: 2;`)
+canvas.setAttribute('style', `position: fixed; width: 100%; height: 100%; pointer-events: none; z-index: 2;`)
 canvas.width = innerWidth * devicePixelRatio
 canvas.height = innerHeight * devicePixelRatio
 c.scale(devicePixelRatio, devicePixelRatio)
 
 addEventListener('resize', () => {
-	canvas.setAttribute('style', `position: fixed; width: ${innerWidth}px; height: ${innerHeight}px; pointer-events: none; z-index: 2;`)
 	canvas.width = innerWidth * devicePixelRatio
 	canvas.height = innerHeight * devicePixelRatio
 	c.scale(devicePixelRatio, devicePixelRatio)
