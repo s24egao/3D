@@ -104,9 +104,9 @@
 			</div>
 		</div>
 	</div>
-	<div id="wide-screen" style="background: white; position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition-duration: 0.5s; z-index: 3; pointer-events: none; color: #7788aa; font: 300 36px Noto Sans TC; opacity: 0; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
+	<div id="wide-screen" style="background: white; position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition-duration: 0.5s; z-index: 3; pointer-events: none; color: #7788aa; font: 300 24px Noto Sans TC; opacity: 0; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
 	<div id="dialogue">
-		<div style="position: relative; width: 75%; height: 100%; cursor: pointer;" onclick="nextLine()">
+		<div style="position: relative; width: 75%; height: 100%; cursor: pointer;" onclick="dialogue.next()">
 			<div id="dialogue-panel"></div>
 			<div style="background: white; position: absolute; top: 0px; left: -12px; width: 6px; height: 100%;"></div>
 			<div style="background: white; position: absolute; top: 0px; right: -12px; width: 6px; height: 100%;"></div>
@@ -116,10 +116,10 @@
 	</div>
 	<div id="title" style="font: 900 80px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 0px; line-height: 1;">3D WEBPAGE<div style="position: absolute; top: 0px; height: 100%; background: white;"></div></div>
 	<div style="font: 900 18px Noto Sans TC; color: #7788aa; position: fixed; margin: 20px; right: 0px; top: 90px; background: white; padding: 3px;">Created by 木白</div>
-	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 150px; cursor: pointer; text-decoration-line: underline;" onclick="select_language(0)">中文</div>
-	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 180px; cursor: pointer; text-decoration-line: underline;" onclick="select_language(2)">日本語</div>
-	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 210px; cursor: pointer; text-decoration-line: underline;" onclick="select_language(1)">English</div>
-	<div id="logo" style="width: 80px; height:80px; position: fixed; margin: 20px; right: 0px; bottom: 0px;">
+	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 150px; cursor: pointer; text-decoration-line: underline;" onclick="dialogue.language = 0">中文</div>
+	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 180px; cursor: pointer; text-decoration-line: underline;" onclick="dialogue.language = 2">日本語</div>
+	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 210px; cursor: pointer; text-decoration-line: underline;" onclick="dialogue.language = 1">English</div>
+	<a id="logo" style="width: 80px; height:80px; position: fixed; margin: 20px; right: 0px; bottom: 0px;" href="https://s24egao.github.io" target="_blank">
 		<div style="position: absolute; width: 45%; height: 9%; top: 36%; left: 0%;"></div>
 		<div style="position: absolute; width: 9%; height: 45%; top: 27%; left: 18%;"></div>
 		<div style="position: absolute; width: 9%; height: 45%; top: 27%; left: 18%;"></div>
@@ -131,7 +131,7 @@
 		<div style="position: absolute; width: 9%; height: 36%; top: 36%; left: 90%;"></div>
 		<div style="position: absolute; width: 18%; height: 9%; top: 54%; left: 63%;"></div>
 		<div style="position: absolute; width: 45%; height: 9%; top: 63%; left: 54%;"></div>
-	</div>
+	</a>
 	<div>
 		<canvas id="clock" width="600" height="288" style="display: none;"></canvas>
 		<video src="assets/video1.mp4" id="video1" style="display: none;" autoplay loop muted playsinline></video>
@@ -140,33 +140,25 @@
 	</div>
 	<script src="dialogue.js"></script>
 	<script type="text/javascript">
-		let clock = document.getElementById('clock').getContext('2d')
-		let frameCount = 0
-		function update() {
-			requestAnimationFrame(update)
-			clock.fillStyle = 'black'
-			clock.fillRect(0, 0, 600, 288)
-			clock.fillStyle = 'white'
-			clock.font = '140px Noto Sans TC'
-			clock.textAlign = 'center'
+		let clockCanvas = document.getElementById('clock').getContext('2d')
+		function updateClockCanvas(d) {
+			clockCanvas.fillStyle = 'black'
+			clockCanvas.fillRect(0, 0, 600, 288)
+			clockCanvas.fillStyle = 'white'
+			clockCanvas.font = '140px Noto Sans TC'
+			clockCanvas.textAlign = 'center'
 			let date = new Date()
-			clock.fillText((date.getHours() < 10)? 0 : parseInt(date.getHours() / 10), 50, 150)
-			clock.fillText((date.getHours() % 10), 130, 150)
-			clock.fillText(':', 195, 135)
-			clock.fillText((date.getMinutes() < 10)? 0 : parseInt(date.getMinutes() / 10), 260, 150)
-			clock.fillText((date.getMinutes() % 10), 340, 150)
-			clock.fillText(':', 405, 135)
-			clock.fillText((date.getSeconds() < 10)? 0 : parseInt(date.getSeconds() / 10), 470, 150)
-			clock.fillText((date.getSeconds() % 10), 550, 150)
-			clock.font = '70px Noto Sans TC'
-			clock.textAlign = 'left'
-			clock.fillText(message[language], 600 - (frameCount * 2) % (clock.measureText(message[language]).width + 700), 250)
-			frameCount++
-		}
-		update()
-
-		function select_language(i) {
-			language = i
+			clockCanvas.fillText((date.getHours() < 10)? 0 : parseInt(date.getHours() / 10), 50, 150)
+			clockCanvas.fillText((date.getHours() % 10), 130, 150)
+			clockCanvas.fillText(':', 195, 135)
+			clockCanvas.fillText((date.getMinutes() < 10)? 0 : parseInt(date.getMinutes() / 10), 260, 150)
+			clockCanvas.fillText((date.getMinutes() % 10), 340, 150)
+			clockCanvas.fillText(':', 405, 135)
+			clockCanvas.fillText((date.getSeconds() < 10)? 0 : parseInt(date.getSeconds() / 10), 470, 150)
+			clockCanvas.fillText((date.getSeconds() % 10), 550, 150)
+			clockCanvas.font = '70px Noto Sans TC'
+			clockCanvas.textAlign = 'left'
+			clockCanvas.fillText(message[dialogue.language], 600 - (d * 120) % (clockCanvas.measureText(message[dialogue.language]).width + 700), 250)
 		}
 	</script>
 	<script src="show_info.js"></script>

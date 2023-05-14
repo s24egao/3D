@@ -1,64 +1,72 @@
-let canvasElement = document.createElement('canvas')
-canvasElement.setAttribute('id', 'show_info')
-document.body.append(canvasElement)
+class ShowInfo {
+	constructor(id) {
+		let canvasElement = document.createElement('canvas')
+		canvasElement.setAttribute('id', id)
+		canvasElement.setAttribute('style', `top: 0px; position: fixed; width: 100%; height: 100%; pointer-events: none; z-index: 2;`)
+		document.body.append(canvasElement)
 
-let canvas = document.getElementById('show_info')
-let c = canvas.getContext('2d')
+		this.canvas = document.getElementById(id)
+		this.c = this.canvas.getContext('2d')
 
-let info = { transition: 0, x: 0, y: 0, display: false, text: '', width: 150, flipX: 1 }
+		this.canvas.width = innerWidth * devicePixelRatio
+		this.canvas.height = innerHeight * devicePixelRatio
+		this.c.scale(devicePixelRatio, devicePixelRatio)
 
-canvas.setAttribute('style', `position: fixed; width: 100%; height: 100%; pointer-events: none; z-index: 2;`)
-canvas.width = innerWidth * devicePixelRatio
-canvas.height = innerHeight * devicePixelRatio
-c.scale(devicePixelRatio, devicePixelRatio)
+		addEventListener('resize', () => {
+			this.canvas.width = innerWidth * devicePixelRatio
+			this.canvas.height = innerHeight * devicePixelRatio
+			this.c.scale(devicePixelRatio, devicePixelRatio)
+		})
 
-addEventListener('resize', () => {
-	canvas.width = innerWidth * devicePixelRatio
-	canvas.height = innerHeight * devicePixelRatio
-	c.scale(devicePixelRatio, devicePixelRatio)
-})
+		this.transition = 0
+		this.x = 0
+		this.y = 0
+		this.display = false
+		this.text = ''
+		this.width = 150
+		this.flipX = 1
+	}
 
-function show(d, x, y, text) {
-	info.display = d
-	if(!d) return
-	info.x = x
-	info.y = y
-	info.text = text
-	info.width = 150 + Math.max(0, c.measureText(text).width - 90)
+	set(d, x, y, text) {
+		this.display = d
+		if(!d) return
+		this.x = x
+		this.y = y
+		this.text = text
+		this.width = 150 + Math.max(0, this.c.measureText(text).width - 90)
+	}
+
+	draw() {
+		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
+		this.transition = this.transition + (((this.display)? 1 : 0) - this.transition) * 0.3
+		if(this.transition < 0.01) return
+	
+		if(this.x > innerWidth - 250) this.flipX = this.flipX + (-1 - this.flipX) * 0.3
+		else if(this.x < 250) this.flipX = this.flipX + (1 - this.flipX) * 0.3
+		else if(Math.abs(this.flipX) < 0.99) this.flipX = this.flipX + (((this.x < innerWidth / 2)? 1 : -1) - this.flipX) * 0.3
+	
+		this.c.fillStyle = `rgb(255, 255, 255)`
+		this.c.beginPath()
+		this.c.arc(this.x, this.y, 6 * this.transition, 0, 6.28318)
+		this.c.fill()
+	
+		this.c.strokeStyle = `rgb(255, 255, 255)`
+		this.c.lineWidth = 2
+		this.c.beginPath()
+		this.c.moveTo(this.x, this.y)
+		this.c.lineTo(this.x + 60 * this.transition * this.flipX, this.y + 60 * this.transition)
+		this.c.stroke()
+	
+		this.c.beginPath()
+		this.c.moveTo(this.x + 60 * this.transition * this.flipX, this.y + 60 * this.transition)
+		this.c.lineTo(this.x + (this.width + 90) * this.transition * this.flipX, this.y + 60 * this.transition)
+		this.c.stroke()
+	
+		this.c.fillStyle = `rgba(255, 255, 255, 0.8)`
+		this.c.fillRect(this.x + ((this.flipX > 0)? 90 : -this.width - 90), this.y + 30 + 30 * (1 - this.transition), this.width, 30 * this.transition)
+	
+		this.c.fillStyle = `rgba(119, 136, 170, ${this.transition})`
+		this.c.font = '24px Noto Sans TC'
+		this.c.fillText(this.text, this.x + ((this.flipX > 0)? 90 : -this.width - 90), this.y + 60)
+	}
 }
-
-function draw() {
-	requestAnimationFrame(draw)
-	c.clearRect(0, 0, canvas.width, canvas.height)
-	info.transition = info.transition + (((info.display)? 1 : 0) - info.transition) * 0.3
-	if(info.transition < 0.01) return
-
-	if(info.x > innerWidth - 250) info.flipX = info.flipX + (-1 - info.flipX) * 0.3
-	else if(info.x < 250) info.flipX = info.flipX + (1 - info.flipX) * 0.3
-	else if(Math.abs(info.flipX) < 0.99) info.flipX = info.flipX + (((info.x < innerWidth / 2)? 1 : -1) - info.flipX) * 0.3
-
-	c.fillStyle = `rgb(255, 255, 255)`
-	c.beginPath()
-	c.arc(info.x, info.y, 6 * info.transition, 0, 6.28318)
-	c.fill()
-
-	c.strokeStyle = `rgb(255, 255, 255)`
-	c.lineWidth = 2
-	c.beginPath()
-	c.moveTo(info.x, info.y)
-	c.lineTo(info.x + 60 * info.transition * info.flipX, info.y + 60 * info.transition)
-	c.stroke()
-
-	c.beginPath()
-	c.moveTo(info.x + 60 * info.transition * info.flipX, info.y + 60 * info.transition)
-	c.lineTo(info.x + (info.width + 90) * info.transition * info.flipX, info.y + 60 * info.transition)
-	c.stroke()
-
-	c.fillStyle = `rgba(255, 255, 255, 0.8)`
-	c.fillRect(info.x + ((info.flipX > 0)? 90 : -info.width - 90), info.y + 30 + 30 * (1 - info.transition), info.width, 30 * info.transition)
-
-	c.fillStyle = `rgba(119, 136, 170, ${info.transition})`
-	c.font = '24px Noto Sans TC'
-	c.fillText(info.text, info.x + ((info.flipX > 0)? 90 : -info.width - 90), info.y + 60)
-}
-draw()
