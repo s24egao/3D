@@ -279,11 +279,12 @@ addImage('clock', {
 }, 'canvas')
 
 let showInfo = new ShowInfo('show-info')
-function animate() {
+let lastTime = 0
+function animate(time) {
 	requestAnimationFrame(animate)
 
-	lookOffsetX += (mouseX - lookOffsetX) * 0.1
-	lookOffsetY += (mouseY - lookOffsetY) * 0.1
+	lookOffsetX += (mouseX - lookOffsetX) * 0.005 * Math.min(time - lastTime, 1000)
+	lookOffsetY += (mouseY - lookOffsetY) * 0.005 * Math.min(time - lastTime, 1000)
 	camera.lookAt(3 + lookOffsetX * 0.8, 4.2 - lookOffsetY * 0.8, -1)
 	camera.position.set(-3 + lookOffsetX * -0.6, 3.6 - lookOffsetY * -0.6, 12.5 + lookOffsetX)
 
@@ -292,10 +293,11 @@ function animate() {
 	gallery.update(d)
 	updateClockCanvas(clock.elapsedTime)
 	for(let texture of animatedTextures) texture.needsUpdate = true
-	showInfo.draw()
+	showInfo.draw(time - lastTime)
 	renderer.render(scene, camera)
+	lastTime = time
 }
-animate()
+animate(0)
 
 let ray = new THREE.Raycaster()
 renderer.domElement.addEventListener('click', e => {

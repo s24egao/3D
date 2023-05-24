@@ -36,9 +36,9 @@ class ShowInfo {
 		this.width = 150 + Math.max(0, this.c.measureText(text).width - 90)
 	}
 
-	draw() {
+	draw(time) {
 		this.c.clearRect(0, 0, this.canvas.width, this.canvas.height)
-		this.transition = this.transition + (((this.display)? 1 : 0) - this.transition) * 0.3
+		this.transition = this.transition + (((this.display)? 1 : 0) - this.transition) * 0.015 * Math.min(time, 1000)
 		if(this.transition < 0.01) return
 	
 		if(this.x > innerWidth - 250) this.flipX = this.flipX + (-1 - this.flipX) * 0.3
