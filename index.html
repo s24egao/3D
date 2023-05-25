@@ -22,6 +22,7 @@
 		body {
 			margin: 0px;
 			user-select: none;
+			background: black;
 		}
 
 		@keyframes dialogue {
@@ -33,6 +34,16 @@
 			0% { left: 0px; right: auto; width: 0%; }
 			50% { width: 100%; }
 			100% { left: auto; right: 0px; width: 0%; }
+		}
+
+		#title {
+			font: 900 80px Noto Sans TC;
+			color: white;
+			position: fixed;
+			margin: 20px;
+			right: 0px;
+			top: 0px;
+			line-height: 1;
 		}
 
 		#dialogue {
@@ -84,6 +95,11 @@
 		}
 		
 		@media screen and (max-width: 900px) {
+			#title {
+				font: 900 36px Noto Sans TC;
+				margin: 8px;
+			}
+
 			#dialogue {
 				height: 180px;
 			}
@@ -91,6 +107,18 @@
 			#dialogue-text {
 				font: 20px Noto Sans TC;
 				padding: 10px;
+			}
+		}
+
+		#wide-screen {
+			pointer-events: none;
+			opacity: 0;
+		}
+
+		@media (max-aspect-ratio: 1) {
+			#wide-screen {
+				pointer-events: all;
+				opacity: 1;
 			}
 		}
 	</style>
@@ -104,7 +132,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="wide-screen" style="background: white; position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition-duration: 0.5s; z-index: 3; pointer-events: none; color: #7788aa; font: 300 24px Noto Sans TC; opacity: 0; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
+	<div id="wide-screen" style="background: white; position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition-duration: 0.5s; z-index: 3; color: #7788aa; font: 300 21px Noto Sans TC; padding: 20px; box-sizing: border-box;">Please visit this webpage on a wide screen</div>
 	<div id="dialogue">
 		<div style="position: relative; width: 75%; height: 100%; cursor: pointer;" onclick="dialogue.next()">
 			<div id="dialogue-panel"></div>
@@ -114,7 +142,7 @@
 			<div id="dialogue-text"></div>
 		</div>
 	</div>
-	<div id="title" style="font: 900 80px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 0px; line-height: 1;">3D WEBPAGE<div style="position: absolute; top: 0px; height: 100%; background: white;"></div></div>
+	<div id="title">3D WEBPAGE<div style="position: absolute; top: 0px; height: 100%; background: white;"></div></div>
 	<div style="font: 900 18px Noto Sans TC; color: #7788aa; position: fixed; margin: 20px; right: 0px; top: 90px; background: white; padding: 3px;">Created by 木白</div>
 	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 150px; cursor: pointer; text-decoration-line: underline;" onclick="dialogue.language = 0">中文</div>
 	<div style="font: 300 18px Noto Sans TC; color: white; position: fixed; margin: 20px; right: 0px; top: 180px; cursor: pointer; text-decoration-line: underline;" onclick="dialogue.language = 2">日本語</div>

@@ -320,6 +320,5 @@ onresize = () => {
 	camera.aspect = innerWidth / innerHeight
 	camera.updateProjectionMatrix()
 	renderer.setSize(innerWidth, innerHeight)
-	document.querySelector('#wide-screen').style.opacity = (innerWidth / innerHeight < 1)? '1' : '0'
 }
 onresize()
