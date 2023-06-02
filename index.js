@@ -1,3 +1,6 @@
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	document.querySelector('#progress div div').style.width = `${loaded / total * 100}%`
@@ -24,7 +27,7 @@ let clock = new THREE.Clock()
 
 const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 1000)
 const scene = new THREE.Scene()
-scene.fog = new THREE.Fog(0x7788aa, 0, 150)
+scene.fog = new THREE.Fog(0x7788aa, 0, 120)
 scene.background = new THREE.Color(0x7788aa)
 
 let mouseX = 0, mouseY = 0, lookOffsetX = 0, lookOffsetY = 0
@@ -32,11 +35,11 @@ let animatedTextures = []
 
 const directionalLight = new THREE.DirectionalLight(0x888888, 1)
 directionalLight.position.set(1, 1, 1)
-const rectLight = new THREE.RectAreaLight(0xffffff, 0.5, 1.6 * 3.5, 0.9 * 3.5)
+const rectLight = new THREE.RectAreaLight(0xffffff, 1, 1.6 * 3.5, 0.9 * 3.5)
 rectLight.position.set(0, 3.65, -3)
 scene.add(directionalLight)
 scene.add(rectLight)
-scene.add(new THREE.AmbientLight(0x607cad, 1))
+scene.add(new THREE.AmbientLight(0x607cad, 2))
 
 let interactive = {
 	list: [],
@@ -72,6 +75,7 @@ let gallery = {
 	addImage(url, onclick, type) {
 		let onload = texture => {
 			if(type == 'video') texture = new THREE.VideoTexture(document.getElementById(url))
+			texture.colorSpace = THREE.SRGBColorSpace
 			let mesh = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 3.15), new THREE.MeshStandardMaterial({ map: texture, transparent: true }))
 			mesh.position.set(0, 3.63, -3.5)
 			if(onclick) interactive.add(mesh, onclick)
@@ -112,6 +116,7 @@ function addImage(url, data, type) {
 	let onload = texture => {
 		if(type == 'video') texture = new THREE.VideoTexture(document.getElementById(url))
 		if(type == 'canvas') texture = new THREE.CanvasTexture(document.getElementById(url)) 
+		texture.colorSpace = THREE.SRGBColorSpace
 		let mesh = new THREE.Mesh(
 			new THREE.PlaneGeometry(data.scale.x, data.scale.y),
 			(!data.alphaMap)? new THREE.MeshStandardMaterial({ map: texture }) : 
@@ -141,15 +146,14 @@ let darkMode = {
 	enabled: false,
 	toggle() {
 		this.enabled = !this.enabled
-		dialogue.load(
-			(this.enabled)? [[ '夜間模式已開啟' ], [ 'Night mode enabled' ], [ 'ナイトモードを切り替えました' ]] : [[ '夜間模式已關閉' ], [ 'Night mode disabled' ], [ 'ナイトモードを切り替えました' ]])
-		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial)
-			child.material.color = new THREE.Color((this.enabled)? 0x222222 : 0xffffff) })
+		dialogue.load((this.enabled)? [[ '夜間模式已開啟' ], [ 'Night mode enabled' ], [ 'ナイトモードを切り替えました' ]] : [[ '夜間模式已關閉' ], [ 'Night mode disabled' ], [ 'ナイトモードを切り替えました' ]])
+		scene.traverse(child => { if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) child.material.color = new THREE.Color((this.enabled)? 0x222222 : 0xffffff) })
 	}
 }
 
-new THREE.GLTFLoader(loadingManager).load('./assets/station.glb', gltf => new THREE.TextureLoader().load('./assets/baked.png', image => {
+new GLTFLoader(loadingManager).load('./assets/station.glb', gltf => new THREE.TextureLoader().load('./assets/baked.png', image => {
 	image.flipY = false
+	image.colorSpace = THREE.SRGBColorSpace
 	let material = new THREE.MeshBasicMaterial({ map: image })
 	gltf.scene.traverse(child => {
 		if(child instanceof THREE.Mesh) {
@@ -268,6 +272,27 @@ addImage('video2', {
 	text: ['關於我', 'about me', '自己紹介']
 }, 'video')
 
+let clockCanvas = document.getElementById('clock').getContext('2d')
+function updateClockCanvas(d) {
+	clockCanvas.fillStyle = 'black'
+	clockCanvas.fillRect(0, 0, 600, 288)
+	clockCanvas.fillStyle = 'white'
+	clockCanvas.font = '140px Noto Sans TC'
+	clockCanvas.textAlign = 'center'
+	let date = new Date()
+	clockCanvas.fillText((date.getHours() < 10)? 0 : parseInt(date.getHours() / 10), 50, 150)
+	clockCanvas.fillText((date.getHours() % 10), 130, 150)
+	clockCanvas.fillText(':', 195, 135)
+	clockCanvas.fillText((date.getMinutes() < 10)? 0 : parseInt(date.getMinutes() / 10), 260, 150)
+	clockCanvas.fillText((date.getMinutes() % 10), 340, 150)
+	clockCanvas.fillText(':', 405, 135)
+	clockCanvas.fillText((date.getSeconds() < 10)? 0 : parseInt(date.getSeconds() / 10), 470, 150)
+	clockCanvas.fillText((date.getSeconds() % 10), 550, 150)
+	clockCanvas.font = '70px Noto Sans TC'
+	clockCanvas.textAlign = 'left'
+	clockCanvas.fillText(message[dialogue.language], 600 - (d * 120) % (clockCanvas.measureText(message[dialogue.language]).width + 700), 250)
+}
+
 addImage('clock', {
 	alphaMap: true,
 	emissive: 0xffffff,
@@ -297,7 +322,7 @@ function animate(time) {
 	renderer.render(scene, camera)
 	lastTime = time
 }
-animate(0)
+requestAnimationFrame(animate)
 
 let ray = new THREE.Raycaster()
 renderer.domElement.addEventListener('click', e => {
@@ -309,16 +334,14 @@ renderer.domElement.addEventListener('click', e => {
 addEventListener('mousemove', e => {
 	mouseX = (e.clientX / innerWidth) * 2 - 1
 	mouseY = (e.clientY / innerHeight) * 2 - 1
-
 	ray.setFromCamera(new THREE.Vector2(mouseX, -mouseY), camera)
 	let intersects = ray.intersectObjects(interactive.list)
 	renderer.domElement.style.cursor = (intersects.length > 0)? 'none' : 'default'
 	showInfo.set((intersects.length > 0), e.clientX, e.clientY, (intersects[0]?.object?.text)? intersects[0].object.text[dialogue.language] : '???')
 })
 
-onresize = () => {
+addEventListener('resize', () => {
 	camera.aspect = innerWidth / innerHeight
 	camera.updateProjectionMatrix()
 	renderer.setSize(innerWidth, innerHeight)
-}
-onresize()
+})

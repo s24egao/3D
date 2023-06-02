@@ -1,13 +1,10 @@
 class ShowInfo {
 	constructor(id) {
-		let canvasElement = document.createElement('canvas')
-		canvasElement.setAttribute('id', id)
-		canvasElement.setAttribute('style', `top: 0px; position: fixed; width: 100%; height: 100%; pointer-events: none; z-index: 2;`)
-		document.body.append(canvasElement)
-
-		this.canvas = document.getElementById(id)
+		this.canvas = document.createElement('canvas')
+		this.canvas.setAttribute('id', id)
+		this.canvas.setAttribute('style', `position: fixed; top: 0px; width: 100%; height: 100%; pointer-events: none; z-index: 2;`)
+		document.body.append(this.canvas)
 		this.c = this.canvas.getContext('2d')
-
 		this.canvas.width = innerWidth * devicePixelRatio
 		this.canvas.height = innerHeight * devicePixelRatio
 		this.c.scale(devicePixelRatio, devicePixelRatio)

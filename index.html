@@ -166,32 +166,16 @@
 		<video src="assets/video2.mp4" id="video2" style="display: none;" autoplay loop muted playsinline></video>
 		<video src="assets/artwork5.mp4" id="video3" style="display: none;" autoplay loop muted playsinline></video>
 	</div>
-	<script src="dialogue.js"></script>
-	<script type="text/javascript">
-		let clockCanvas = document.getElementById('clock').getContext('2d')
-		function updateClockCanvas(d) {
-			clockCanvas.fillStyle = 'black'
-			clockCanvas.fillRect(0, 0, 600, 288)
-			clockCanvas.fillStyle = 'white'
-			clockCanvas.font = '140px Noto Sans TC'
-			clockCanvas.textAlign = 'center'
-			let date = new Date()
-			clockCanvas.fillText((date.getHours() < 10)? 0 : parseInt(date.getHours() / 10), 50, 150)
-			clockCanvas.fillText((date.getHours() % 10), 130, 150)
-			clockCanvas.fillText(':', 195, 135)
-			clockCanvas.fillText((date.getMinutes() < 10)? 0 : parseInt(date.getMinutes() / 10), 260, 150)
-			clockCanvas.fillText((date.getMinutes() % 10), 340, 150)
-			clockCanvas.fillText(':', 405, 135)
-			clockCanvas.fillText((date.getSeconds() < 10)? 0 : parseInt(date.getSeconds() / 10), 470, 150)
-			clockCanvas.fillText((date.getSeconds() % 10), 550, 150)
-			clockCanvas.font = '70px Noto Sans TC'
-			clockCanvas.textAlign = 'left'
-			clockCanvas.fillText(message[dialogue.language], 600 - (d * 120) % (clockCanvas.measureText(message[dialogue.language]).width + 700), 250)
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.153.0/examples/jsm/"
+			}
 		}
 	</script>
+	<script src="dialogue.js"></script>
 	<script src="show_info.js"></script>
-	<script src="https://unpkg.com/three@0.143.0/build/three.min.js"></script>
-	<script src="https://unpkg.com/three@0.143.0/examples/js/loaders/GLTFLoader.js"></script>
-	<script src="index.js"></script>
+	<script type="module" src="index.js"></script>
 </body>
 </html>
