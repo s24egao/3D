@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import Gallery from './gallery.js'
 
 const loadingManager = new THREE.LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -57,59 +58,25 @@ let particles = {
 			let points = []
 			for(let i = 0; i < 1000; i++) points.push(Math.random() * 100 - 20, Math.random() * 20, Math.random() * -80)
 			this.mesh.geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3))
+			this.mesh.geometry.attributes.position.setUsage(THREE.DynamicDrawUsage)
 			scene.add(this.mesh)
 		}
 		this.mesh.geometry.attributes.position.needsUpdate = true
 		for(let i = 0; i < 1000; i++) {
 			let position = this.mesh.geometry.attributes.position.array
-			position[i * 3] += (position[i * 3] > -20)? (Math.sin(i * 123.45) * 5 - 5) * d : 100
-			position[i * 3 + 1] += (position[i * 3 + 1] > 0)? -d * 2 : 20
+			position[i * 3] += (position[i * 3] > -20)? (Math.sin(i * 123.45) * 5 - 5) * Math.min(d, 1) : 100
+			position[i * 3 + 1] += (position[i * 3 + 1] > 0)? -Math.min(d, 1) * 2 : 20
 		}
 	}
 }
 
-let gallery = {
-	duration: 10,
-	artworks: [],
-	time: 0,
-	addImage(url, onclick, type) {
-		let onload = texture => {
-			if(type == 'video') texture = new THREE.VideoTexture(document.getElementById(url))
-			texture.colorSpace = THREE.SRGBColorSpace
-			let mesh = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 3.15), new THREE.MeshStandardMaterial({ map: texture, transparent: true }))
-			mesh.position.set(0, 3.63, -3.5)
-			if(onclick) interactive.add(mesh, onclick)
-			scene.add(mesh)
-			this.artworks.push(mesh)
-		}
-		if(type == 'video')	{
-			document.getElementById(url).play()
-			if(document.getElementById(url).readyState > 0) onload()
-			else document.getElementById(url).addEventListener('loadeddata', onload)
-		} else new THREE.TextureLoader(loadingManager).load(url, onload)
-	},
-	update(d) {
-		this.time += d
-		let display_index = parseInt(this.time / this.duration) % this.artworks.length
-		for(let i = 0; i < gallery.artworks.length; i++) {
-			if(display_index == i) {
-				this.artworks[i].position.z = -3.5
-				this.artworks[i].material.opacity = Math.min(((this.time / this.duration) % this.artworks.length - i) * 10, 1)
-				this.artworks[i].material.map.needsUpdate = true
-			}
-			else if(display_index == (i + 1) % this.artworks.length) {
-				this.artworks[i].position.z = -3.51
-				this.artworks[i].material.opacity = 1
-				this.artworks[i].material.map.needsUpdate = true
-			}
-			else this.artworks[i].position.z = -3.52
-		}
-	}
-}
+let gallery = new Gallery(10, 5.6, 3.15)
+gallery.mesh.position.set(0, 3.63, -3.5)
+scene.add(gallery.mesh)
 
 let skipButton = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 0.05), new THREE.MeshStandardMaterial())
 skipButton.position.set(0, 1.9, -3.49)
-interactive.add(skipButton, () => { gallery.time += Math.max(0, 10 - gallery.time % 10) }, ['下一張圖片', 'next image', '次の画像'])
+interactive.add(skipButton, () => gallery.next(), ['下一張圖片', 'next image', '次の画像'])
 scene.add(skipButton)
 
 function addImage(url, data, type) {
@@ -131,7 +98,7 @@ function addImage(url, data, type) {
 		if(data.position) mesh.position.set(data.position.x, data.position.y, data.position.z)
 		if(data.rotation) mesh.rotation.set(data.rotation.x / 57.29577, data.rotation.y / 57.29577, data.rotation.z / 57.29577)
 		if(data.onclick) interactive.add(mesh, data.onclick, data.text)
-		if(type == 'video' || type == 'canvas')animatedTextures.push(texture)
+		if(type == 'video' || type == 'canvas') animatedTextures.push(texture)
 		scene.add(mesh)
 	}
 	if(type == 'video') {
@@ -168,13 +135,13 @@ new GLTFLoader(loadingManager).load('./assets/station.glb', gltf => new THREE.Te
 	scene.add(gltf.scene)
 }))
 
-gallery.addImage('./assets/artwork1.jpg', dialogue4)
-gallery.addImage('./assets/artwork2.jpg', dialogue10)
-gallery.addImage('./assets/artwork3.jpg', dialogue11)
-gallery.addImage('./assets/artwork4.jpg', dialogue12)
-gallery.addImage('video3', () => {}, 'video')
-gallery.addImage('./assets/artwork6.jpg', dialogue3)
-gallery.addImage('./assets/artwork7.jpg', () => {})
+gallery.add('./assets/artwork1.jpg', loadingManager)
+gallery.add('./assets/artwork2.jpg', loadingManager)
+gallery.add('./assets/artwork3.jpg', loadingManager)
+gallery.add('./assets/artwork4.jpg', loadingManager)
+gallery.add('video3', loadingManager, true)
+gallery.add('./assets/artwork6.jpg', loadingManager)
+gallery.add('./assets/artwork7.jpg', loadingManager)
 
 addImage('./assets/poster1.jpg', {
 	scale: { x: 1.5, y: 2 },
