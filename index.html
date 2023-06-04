@@ -21,6 +21,7 @@
 
 		body {
 			margin: 0px;
+			-webkit-user-select: none;
 			user-select: none;
 			background: black;
 		}
@@ -61,14 +62,22 @@
 
 		#dialogue-panel {
 			background: white;
-			opacity: 0.7;
+			opacity: 0.85;
 			width: 100%;
 			height: 100%;
 			transition-duration: 0.3s;
 		}
 
-		#dialogue div:hover #dialogue-panel {
-			opacity: 0.9;
+		#dialogue > div::after {
+			content: '';
+			animation: dialogue 1s 0s infinite ease-in-out;
+			position: absolute; bottom: 30px;
+			right: 45px;
+			font: 42px Noto Sans TC;
+			color: #7788aa;
+			width: 30px;
+			height: 30px;
+			border: solid 2px #7788aa
 		}
 
 		#dialogue-text {
@@ -126,7 +135,7 @@
 <body>
 	<div id="loading" style="background: white; position: fixed; width: 100%; height: 100%; transition-duration: 0.5s; z-index: 3;">
 		<div id="progress" style="position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; transition-duration: 0.5s;">
-			<div style="margin: 20px; color: #7788aa; font: 24px Noto Sans TC;">Loading...</div>
+			<div style="margin: 20px; color: #7788aa; font: 24px Noto Sans TC; letter-spacing: 1px;">LOADING...</div>
 			<div style="width: 30%; height: 3px; background: #dddddd;">
 				<div style="width: 0%; height: 100%; background: #7788aa; transition-duration: 1s"></div>
 			</div>
@@ -138,7 +147,6 @@
 			<div id="dialogue-panel"></div>
 			<div style="background: white; position: absolute; top: 0px; left: -12px; width: 6px; height: 100%;"></div>
 			<div style="background: white; position: absolute; top: 0px; right: -12px; width: 6px; height: 100%;"></div>
-			<div style="animation: dialogue 1s 0s infinite ease-in-out; position: absolute; bottom: 30px; right: 45px; font: 42px Noto Sans TC; color: #7788aa; width: 30px; height: 30px; border: solid 2px #7788aa"></div>
 			<div id="dialogue-text"></div>
 		</div>
 	</div>

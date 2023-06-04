@@ -6,8 +6,7 @@ export default class Gallery {
     textures = []
 
 	constructor(duration, w, h) {
-        this.color = new THREE.Color(1, 1, 1)
-        this.material = new THREE.MeshStandardMaterial({ color: this.color })
+        this.material = new THREE.MeshStandardMaterial({ color: new THREE.Color(1, 1, 1) })
         this.geometry = new THREE.PlaneGeometry(w, h)
         this.mesh = new THREE.Mesh(this.geometry, this.material)
         this.duration = duration
@@ -33,10 +32,11 @@ export default class Gallery {
     update(d) {
         this.time += d
 		let i = parseInt(this.time / this.duration) % this.textures.length
-		this.material.map = this.textures[i]
-
+		if(this.material.map != this.textures[i]) {
+            this.material.map = this.textures[i]
+            this.material.needsUpdate = true
+        }
         let v = Math.min((this.time / this.duration) % 1 * 20, 1) * Math.min(20 - (this.time / this.duration) % 1 * 20, 1)
-        this.color.setRGB(v, v, v)
-        this.material.color = this.color
+        this.material.color.setRGB(v, v, v)
     }
 }

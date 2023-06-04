@@ -73,11 +73,7 @@ let particles = {
 let gallery = new Gallery(10, 5.6, 3.15)
 gallery.mesh.position.set(0, 3.63, -3.5)
 scene.add(gallery.mesh)
-
-let skipButton = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 0.05), new THREE.MeshStandardMaterial())
-skipButton.position.set(0, 1.9, -3.49)
-interactive.add(skipButton, () => gallery.next(), ['下一張圖片', 'next image', '次の画像'])
-scene.add(skipButton)
+interactive.add(gallery.mesh, () => gallery.next(), ['下一張圖片', 'next image', '次の画像'])
 
 function addImage(url, data, type) {
 	let onload = texture => {
@@ -264,7 +260,7 @@ addImage('clock', {
 	alphaMap: true,
 	emissive: 0xffffff,
 	scale: { x: 3.75, y: 1.8 },
-	position: { x: 5.96, y: 5.3, z: -0.3 },
+	position: { x: 5.99, y: 5.3, z: -0.3 },
 	rotation: { x: 0, y: -90, z: 0 },
 	onclick: dialogue9,
 	text: ['電子鐘', 'digital clock', '時計']
